@@ -2,6 +2,7 @@ import praw
 import json
 import logging
 import MySQLdb
+import threading
 from twitch import TwitchClient
 from pathlib import Path
 from collections import OrderedDict
@@ -46,7 +47,42 @@ def connectDB():
 
     return mydb
 
-def getFrontPage(reddit, db, twitch):
+def createChannelsDictionary(db):
+    cursor = db.cursor()
+
+    sql = "SHOW TABLES"
+
+    cursor.execute(sql)
+    channelData = cursor.fetchall()
+
+    channelsDictionary = {}
+    slugDictionary = {}
+    
+    for table in channelData: 
+        channelsDictionary.update({table[0]:1})
+        
+        if table[0] != 'channels':
+            sql = "select slug from " + table[0]
+            cursor.execute(sql)
+            dataSlug = cursor.fetchall()
+
+            for slug in dataSlug:
+                slugDictionary.update({slug[0]:1})
+
+    return channelsDictionary, slugDictionary
+
+def pollForData(reddit, twitch, db, dictionary, slugDictionary):
+
+    threading.Timer(900.0, pollForData, [reddit, twitch, db, dictionary, slugDictionary]).start()
+
+    print('Working...')
+
+    dataVector, dictionary = getFrontPage(reddit, twitch, db, dictionary)
+    dictionary, slugDictionary = clipTables(reddit, twitch, db, dataVector, dictionary, slugDictionary)
+
+    print('Done...\n')
+
+def getFrontPage(reddit, twitch, db, dictionary):
 
     vector = []
 
@@ -73,7 +109,7 @@ def getFrontPage(reddit, db, twitch):
                 d['clip views'] = clipViews
                 d['clip date'] = clipDate
 
-                insertTOStreamerTable(db, d)
+                insertTOStreamerTable(db, d, dictionary)
                 vector.append(d)
     
     print("------")
@@ -82,7 +118,7 @@ def getFrontPage(reddit, db, twitch):
     #     print(x)
     #     print()
 
-    return vector
+    return vector, dictionary
 
 def getClipInfo(twitch, slug):
 
@@ -102,46 +138,51 @@ def getChannelInfo(twitch, id):
 
     return channel.followers, channel.views
 
-def createStreamerTable(db):
-    cursor = db.cursor()
+def createStreamerTable(db, dictionary):
 
-    sqlTable = """CREATE TABLE IF NOT EXISTS channels (
-                    CHANNEL VARCHAR(30) NOT NULL,
-                    ID          INT NOT NULL,
-                    FOLLOWERS   INT NOT NULL,
-                    VIEWS       INT NOT NULL )"""
-    
-    cursor.execute(sqlTable)
+    if 'channels' not in dictionary:
+        cursor = db.cursor()
 
-    # the following will not work if there are non unique entries in the table
+        sqlTable = """CREATE TABLE IF NOT EXISTS channels (
+                        CHANNEL VARCHAR(30) NOT NULL,
+                        ID          INT NOT NULL,
+                        FOLLOWERS   INT NOT NULL,
+                        VIEWS       INT NOT NULL )"""
+        
+        cursor.execute(sqlTable)
 
-    constraint = "ALTER TABLE channels \
-                    ADD CONSTRAINT UC_streamer UNIQUE (channel, id)"
+        # the following will not work if there are non unique entries in the table
 
-    try:
-        cursor.execute(constraint)
-        db.commit()
-    
-    except:
-        db.rollback()
-        print('Error: Unable to add constraints')
+        constraint = "ALTER TABLE channels \
+                        ADD CONSTRAINT UC_streamer UNIQUE (channel, id)"
 
-def insertTOStreamerTable(db, d):
-    cursor = db.cursor()
+        try:
+            cursor.execute(constraint)
+            db.commit()
+        
+        except:
+            db.rollback()
+            print('Error: Unable to add constraints')
+        
 
-    # TODO: has map to check if table exist
+def insertTOStreamerTable(db, d, dictionary):
+    if d['streamer'] not in dictionary:
+        cursor = db.cursor()
 
-    sql = "INSERT INTO channels(CHANNEL, ID, FOLLOWERS, VIEWS) \
-            VALUES ( '%s', '%s', '%s', '%s')" % \
-            (d['streamer'], d['sid'], d['followers'], d['views'])
+        # TODO: has map to check if table exist
 
-    try:
-        cursor.execute(sql)
-        db.commit()
+        sql = "INSERT INTO channels(CHANNEL, ID, FOLLOWERS, VIEWS) \
+                VALUES ( '%s', '%s', '%s', '%s')" % \
+                (d['streamer'], d['sid'], d['followers'], d['views'])
 
-    except:
-        db.rollback()
-        #print('Error: Unable to add to streamer table')
+        try:
+            cursor.execute(sql)
+            db.commit()
+
+        except:
+            db.rollback()
+            print('Error: Unable to add', d['streamer'], 'to channel table')
+        
     
 
 def duplicateCheck(db):
@@ -162,7 +203,7 @@ def duplicateCheck(db):
     except:
         print('Error: Unable to fetch data')
 
-def clipTables(reddit, twitch, db, dataVector):
+def clipTables(reddit, twitch, db, dataVector, dictionary, slugDictionary):
 
     for channel in dataVector:
         streamer = channel['streamer']
@@ -170,56 +211,73 @@ def clipTables(reddit, twitch, db, dataVector):
         clip = channel['title']
         date = channel['clip date']
 
-        createChannelOverviewTable(streamer, db)
-        insertChannelOverviewTable(streamer, clip, slug, date, db)
-
-def createChannelOverviewTable(streamer, db):
-    cursor = db.cursor()
-    # TODO: has map to check if table exist
-
-    sql = """CREATE TABLE IF NOT EXISTS """ + streamer + "(\
-                CLIP    VARCHAR(200) NOT NULL UNIQUE, \
-                SLUG    VARCHAR(100), \
-                DATE    DATE NOT NULL, \
-                TIME    TIME NOT NULL )"
+        dictionary = createChannelOverviewTable(streamer, db, dictionary)
+        slugDictionary = insertChannelOverviewTable(streamer, clip, slug, date, db, slugDictionary)
     
-    try:
-        cursor.execute(sql)
+    return dictionary, slugDictionary
 
-    except:
-        print('Could not create table')
+def createChannelOverviewTable(streamer, db, dictionary):
+    if streamer not in dictionary:
+        cursor = db.cursor()
+        # TODO: has map to check if table exist
+
+        sql = """CREATE TABLE IF NOT EXISTS """ + streamer + "(\
+                    CLIP    VARCHAR(200) NOT NULL UNIQUE, \
+                    SLUG    VARCHAR(100), \
+                    DATE    DATE NOT NULL, \
+                    TIME    TIME NOT NULL )"
+        
+        try:
+            cursor.execute(sql)
+
+        except:
+            print('Could not create overview table')
+        
+        dictionary.update({streamer: 1})
     
-def insertChannelOverviewTable(streamer, clip, slug, date, db):
-
-
-    cursor = db.cursor()
-
-    clip = clip.replace('\'', '')
-    print('Attempting', streamer, '-', clip, date)
-
-
-    sql = "INSERT INTO " + streamer + "(CLIP, SLUG, DATE, TIME) \
-            VALUES ( '%s', '%s', '%s', '%s' )" % \
-            (clip, slug, date.date(), date.time())
-
-    try:
-        cursor.execute(sql)
-        db.commit()
+    # else:
+    #     print(streamer, 'already exists in dictionary')
     
-    except:
-        db.rollback()
-        print('Error: Unable to create overview table\n')
+    return dictionary
+    
+
+    
+def insertChannelOverviewTable(streamer, clip, slug, date, db, slugDictionary):
+    if slug not in slugDictionary:
+        cursor = db.cursor()
+
+        clip = clip.replace('\'', '')
+        print('Attempting', streamer, '-', clip, date)
+
+
+        sql = "INSERT INTO " + streamer + "(CLIP, SLUG, DATE, TIME) \
+                VALUES ( '%s', '%s', '%s', '%s' )" % \
+                (clip, slug, date.date(), date.time())
+
+        try:
+            cursor.execute(sql)
+            db.commit()
+        
+        except:
+            db.rollback()
+            print('Error: Unable to add to', streamer, 'overview table\n')
+
+        slugDictionary.update({slug: 1})
+    
+    return slugDictionary
         
 
 def main():
     db = connectDB()
+    channelsDictionary, slugDictionary = createChannelsDictionary(db)
     reddit = getRedditAPIAccess()
     twitch = getTwitchAPIAccess()
 
-    createStreamerTable(db)
-    dataVector = getFrontPage(reddit, db, twitch)
+    #createStreamerTable(db, dictionary)
+    pollForData(reddit, twitch, db, channelsDictionary, slugDictionary)
 
-    clipTables(reddit, twitch, db, dataVector)
+    # dataVector, channelsDictionary = getFrontPage(reddit, twitch, db, channelsDictionary)
+    # channelsDictionary, slugDictionary = clipTables(reddit, twitch, db, dataVector, channelsDictionary, slugDictionary)
 
     #duplicateCheck(db)
 
