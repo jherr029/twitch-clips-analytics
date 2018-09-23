@@ -80,6 +80,7 @@ def pollForData(reddit, twitch, db, dictionary, slugDictionary):
     dataVector, dictionary = getFrontPage(reddit, twitch, db, dictionary)
     dictionary, slugDictionary = clipTables(reddit, twitch, db, dataVector, dictionary, slugDictionary)
 
+    #updateStats(dataVector, db)
     print('Done...\n')
 
 def getFrontPage(reddit, twitch, db, dictionary):
@@ -172,8 +173,8 @@ def insertTOStreamerTable(db, d, dictionary):
         # TODO: has map to check if table exist
 
         sql = "INSERT INTO channels(CHANNEL, ID, FOLLOWERS, VIEWS) \
-                VALUES ( '%s', '%s', '%s', '%s')" % \
-                (d['streamer'], d['sid'], d['followers'], d['views'])
+                VALUES ( '%s', '%i', '%i', '%i')" % \
+                (d['streamer'], int(d['sid']), int(d['followers']), int(d['views']))
 
         try:
             cursor.execute(sql)
@@ -265,6 +266,25 @@ def insertChannelOverviewTable(streamer, clip, slug, date, db, slugDictionary):
         slugDictionary.update({slug: 1})
     
     return slugDictionary
+
+def updateStats(channels, db):
+    cursor = db.cursor()
+
+    for channel in channels: 
+        streamer = channel['streamer']
+        followers = channel['followers']
+        views = channel['views']
+
+        sql = "UPDATE channels SET FOLLOWERS = " + followers + \
+                ", VIEWS = " + views + \
+                " WHERE CHANNEL = '%s'" % (streamer)
+        
+        try:
+            cursor.execute(sql)
+            db.commit()
+        except:
+            print('Unable to update', streamer, 'stats' )
+            db.rollback()
         
 
 def main():
@@ -273,7 +293,7 @@ def main():
     reddit = getRedditAPIAccess()
     twitch = getTwitchAPIAccess()
 
-    #createStreamerTable(db, dictionary)
+    createStreamerTable(db, channelsDictionary)
     pollForData(reddit, twitch, db, channelsDictionary, slugDictionary)
 
     # dataVector, channelsDictionary = getFrontPage(reddit, twitch, db, channelsDictionary)
