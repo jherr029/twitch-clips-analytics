@@ -55,9 +55,10 @@ def createChannelsDictionary(db):
     cursor.execute(sql)
     channelData = cursor.fetchall()
 
-    channelsDictionary = {}
+    idDictionary = {}
     slugDictionary = {}
-    
+    channelsDictionary = {}
+
     for table in channelData: 
         channelsDictionary.update({table[0]:1})
         
@@ -69,18 +70,27 @@ def createChannelsDictionary(db):
             for slug in dataSlug:
                 slugDictionary.update({slug[0]:1})
 
-    return channelsDictionary, slugDictionary
+            sql = "select id from channels"
+            cursor.execute(sql)
+            idList = cursor.fetchall()
 
-def pollForData(reddit, twitch, db, dictionary, slugDictionary):
+            for id in idList:
+                idDictionary.update({id:1})
 
-    threading.Timer(900.0, pollForData, [reddit, twitch, db, dictionary, slugDictionary]).start()
+    return channelsDictionary, slugDictionary, idDictionary
+
+def pollForData(reddit, twitch, db, dictionary, slugDictionary, idDictionary):
+
+    threading.Timer(900.0, pollForData, [reddit, twitch, db, dictionary, slugDictionary, idDictionary]).start()
 
     print('Working...')
 
     dataVector, dictionary = getFrontPage(reddit, twitch, db, dictionary)
-    dictionary, slugDictionary = clipTables(reddit, twitch, db, dataVector, dictionary, slugDictionary)
+    dictionary, slugDictionary, newIDs = clipTables(reddit, twitch, db, dataVector, dictionary, slugDictionary, idDictionary)
 
-    #updateStats(dataVector, db)
+    updateStats(idDictionary, twitch, db)
+
+    idDictionary = updateIDDictionary(idDictionary, newIDs)
     print('Done...\n')
 
 def getFrontPage(reddit, twitch, db, dictionary):
@@ -204,7 +214,9 @@ def duplicateCheck(db):
     except:
         print('Error: Unable to fetch data')
 
-def clipTables(reddit, twitch, db, dataVector, dictionary, slugDictionary):
+def clipTables(reddit, twitch, db, dataVector, dictionary, slugDictionary, idDictionary):
+
+    newIDs = {}
 
     for channel in dataVector:
         streamer = channel['streamer']
@@ -212,10 +224,14 @@ def clipTables(reddit, twitch, db, dataVector, dictionary, slugDictionary):
         clip = channel['title']
         date = channel['clip date']
 
+
+        if channel['sid'] not in idDictionary:
+            newIDs.update({channel['sid']:1})
+
         dictionary = createChannelOverviewTable(streamer, db, dictionary)
         slugDictionary = insertChannelOverviewTable(streamer, clip, slug, date, db, slugDictionary)
     
-    return dictionary, slugDictionary
+    return dictionary, slugDictionary, newIDs
 
 def createChannelOverviewTable(streamer, db, dictionary):
     if streamer not in dictionary:
@@ -267,34 +283,40 @@ def insertChannelOverviewTable(streamer, clip, slug, date, db, slugDictionary):
     
     return slugDictionary
 
-def updateStats(channels, db):
+def updateStats(channelIDs, twitch, db):
     cursor = db.cursor()
 
-    for channel in channels: 
-        streamer = channel['streamer']
-        followers = channel['followers']
-        views = channel['views']
+    for idNum in channelIDs:
+        channel = twitch.channels.get_by_id(idNum[0])
 
-        sql = "UPDATE channels SET FOLLOWERS = " + followers + \
-                ", VIEWS = " + views + \
-                " WHERE CHANNEL = '%s'" % (streamer)
+
+        sql = "UPDATE channels SET FOLLOWERS = " + str(channel.followers) + \
+                ", VIEWS = " + str(channel.views) + \
+                " WHERE CHANNEL = '%s'" % (channel.name)
         
         try:
             cursor.execute(sql)
             db.commit()
         except:
-            print('Unable to update', streamer, 'stats' )
+            print('Unable to update', channel.name, 'stats' )
             db.rollback()
-        
+
+def updateIDDictionary(currentIDs, newIDs):        
+    print()
+    for curID in newIDs:
+        #print(curID)
+        currentIDs.update({curID:1})
+    
+    return currentIDs
 
 def main():
     db = connectDB()
-    channelsDictionary, slugDictionary = createChannelsDictionary(db)
+    channelsDictionary, slugDictionary, idDictionary = createChannelsDictionary(db)
     reddit = getRedditAPIAccess()
     twitch = getTwitchAPIAccess()
 
     createStreamerTable(db, channelsDictionary)
-    pollForData(reddit, twitch, db, channelsDictionary, slugDictionary)
+    pollForData(reddit, twitch, db, channelsDictionary, slugDictionary, idDictionary)
 
     # dataVector, channelsDictionary = getFrontPage(reddit, twitch, db, channelsDictionary)
     # channelsDictionary, slugDictionary = clipTables(reddit, twitch, db, dataVector, channelsDictionary, slugDictionary)
