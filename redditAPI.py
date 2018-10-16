@@ -81,7 +81,7 @@ def createChannelsDictionary(db):
 
 def pollForData(reddit, twitch, db, dictionary, slugDictionary, idDictionary):
 
-    threading.Timer(900.0, pollForData, [reddit, twitch, db, dictionary, slugDictionary, idDictionary]).start()
+    #threading.Timer(900.0, pollForData, [reddit, twitch, db, dictionary, slugDictionary, idDictionary]).start()
 
     print('Working...')
 
@@ -287,12 +287,14 @@ def updateStats(channelIDs, twitch, db):
     cursor = db.cursor()
 
     for idNum in channelIDs:
-        channel = twitch.channels.get_by_id(idNum[0])
+        try: 
+            channel = twitch.channels.get_by_id(idNum[0])
 
-
-        sql = "UPDATE channels SET FOLLOWERS = " + str(channel.followers) + \
-                ", VIEWS = " + str(channel.views) + \
-                " WHERE CHANNEL = '%s'" % (channel.name)
+            sql = "UPDATE channels SET FOLLOWERS = " + str(channel.followers) + \
+                    ", VIEWS = " + str(channel.views) + \
+                    " WHERE CHANNEL = '%s'" % (channel.name)
+        except:
+            print('channel no longer exist or has been banned')
         
         try:
             cursor.execute(sql)
