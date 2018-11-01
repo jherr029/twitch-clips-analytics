@@ -294,7 +294,7 @@ def updateStats(channelIDs, twitch, db):
                     ", VIEWS = " + str(channel.views) + \
                     " WHERE CHANNEL = '%s'" % (channel.name)
         except:
-            print('channel no longer exist or has been banned')
+            print('channel no longer exist or has been banned, ' + idNum[0])
         
         try:
             cursor.execute(sql)
@@ -304,9 +304,7 @@ def updateStats(channelIDs, twitch, db):
             db.rollback()
 
 def updateIDDictionary(currentIDs, newIDs):        
-    print()
     for curID in newIDs:
-        #print(curID)
         currentIDs.update({curID:1})
     
     return currentIDs
