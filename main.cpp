@@ -5,6 +5,7 @@
 #include <memory>
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
+// #include <jsoncpp/json/json.h>
 
 using namespace std;
 using json = nlohmann::json;
@@ -38,7 +39,7 @@ int main()
 
     curl_global_init( CURL_GLOBAL_ALL );
 
-    string url = "https://www.reddit.com/r/livestreamfail/hot.json?count=5";
+    string url = "https://www.reddit.com/r/livestreamfail/hot.json?limit=2";
     string readBuffer;
 
     curl_easy_setopt( curl, CURLOPT_URL, url.c_str() );
@@ -55,16 +56,18 @@ int main()
     curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION, WriteCallback );
 
     curl_easy_setopt( curl, CURLOPT_WRITEDATA, strTemp);
+    // curl_easy_setopt( curl, CURLOPT_WRITEDATA, httpData.get() );
 
     curl_easy_perform( curl );
     curl_easy_getinfo( curl, CURLINFO_RESPONSE_CODE, &httpCode);
     curl_easy_cleanup( curl );
 
-    temp = strTemp;
-    cout << temp.size() << endl;
+    auto test = json::parse(strTemp);
+
+    cout << test["data"]["children"][0]["data"]["title"] << endl;
+    cout << test["data"]["children"][1]["data"]["title"] << endl;
 
 
-    cout << temp << endl;
     // curl_global_cleanup();
     
     return 0;
