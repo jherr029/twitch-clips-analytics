@@ -4,11 +4,15 @@
 #include <cstdint>
 #include <memory>
 #include <curl/curl.h>
-#include <nlohmann/json.hpp>
+// #include <nlohmann/json.hpp>
 // #include <jsoncpp/json/json.h>
+#include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/prettywriter.h>
 
 using namespace std;
-using json = nlohmann::json;
+// using json = nlohmann::json;
+using namespace rapidjson;
 
 namespace 
 {
@@ -50,7 +54,8 @@ int main()
     int httpCode(0);
 
     string strTemp;
-    json temp;
+    // const char * strTemp;
+    // json temp;
 
     unique_ptr<string> httpData(new string());
     curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION, WriteCallback );
@@ -62,10 +67,20 @@ int main()
     curl_easy_getinfo( curl, CURLINFO_RESPONSE_CODE, &httpCode);
     curl_easy_cleanup( curl );
 
-    auto test = json::parse(strTemp);
+    // auto test = json::parse(strTemp);
 
-    cout << test["data"]["children"][0]["data"]["title"] << endl;
-    cout << test["data"]["children"][1]["data"]["title"] << endl;
+    Document document;
+    document.Parse(strTemp.c_str());
+
+    StringBuffer buffer;
+    PrettyWriter<StringBuffer> writer(buffer);
+    document.Accept(writer);
+
+    cout << buffer.GetString() << endl;
+
+
+    // cout << test["data"]["children"][0]["data"]["title"] << endl;
+    // cout << test["data"]["children"][1]["data"]["title"] << endl;
 
 
     // curl_global_cleanup();
