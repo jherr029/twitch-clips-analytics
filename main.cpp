@@ -43,7 +43,7 @@ int main()
 
     curl_global_init( CURL_GLOBAL_ALL );
 
-    string url = "https://www.reddit.com/r/livestreamfail/hot.json?limit=2";
+    string url = "https://www.reddit.com/r/livestreamfail/hot.json?limit=10";
     string readBuffer;
 
     curl_easy_setopt( curl, CURLOPT_URL, url.c_str() );
@@ -76,7 +76,8 @@ int main()
     PrettyWriter<StringBuffer> writer(buffer);
     document.Accept(writer);
 
-    cout << buffer.GetString() << endl;
+    // cout << buffer.GetString() << endl;
+    cout << document["data"]["children"][5]["data"]["title"].GetString() << endl;
 
 
     // cout << test["data"]["children"][0]["data"]["title"] << endl;
