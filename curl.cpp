@@ -48,7 +48,7 @@ string curlGetJsonReddit()
 
     vector<string> info = getInfo();
     string userInfo = info[0] + ":" + info[1];
-    cout << userInfo << endl;
+    // cout << userInfo << endl;
 
     CURL * curl = curl_easy_init();
     CURLcode result; // to delete later
@@ -91,13 +91,70 @@ string curlGetJsonReddit()
     return strTemp;
 }
 
-// string requestGetJson()
-// {
-//     string buffer;
 
-//     // auto temp = cpr::Get(cpr::Url{ redditURL });
-//     auto temp = cpr::Get(cpr::Url{"http://www.httpbin.org/get"});
-//     // cout << temp.text << endl;
+string getInfoTwitch()
+{
+    ifstream file;
+    file.open("twitchApi");
 
-//     return buffer;
-// }
+    string line;
+
+    getline( file, line );
+
+    cout << line << endl;
+
+    return line;
+}
+
+string curlGetJsonTwitch()
+{
+    string strTemp2;
+
+
+    string info = getInfoTwitch();
+    struct curl_slist * list = NULL;
+
+    string client = "Client-ID: " + info;
+    list = curl_slist_append(list, client.c_str());
+
+    string urlTemp = "https://api.twitch.tv/helix/streams?game_id=33214";
+
+    CURL * curl = curl_easy_init();
+    CURLcode result; // to delete later
+
+    curl_global_init( CURL_GLOBAL_ALL );
+
+    string readBuffer;
+
+    curl_easy_setopt( curl, CURLOPT_URL, urlTemp.c_str() );
+    curl_easy_setopt( curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+    curl_easy_setopt( curl, CURLOPT_TIMEOUT, 10);
+    curl_easy_setopt( curl, CURLOPT_FOLLOWLOCATION, 1L);
+
+    int httpCode(0);
+
+    curl_easy_setopt( curl, CURLOPT_HTTPHEADER, list );
+    // curl_easy_setopt( curl, CURLOPT_XOAUTH2_BEARER, info.c_str() );
+    curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION, WriteCallback );
+
+    curl_easy_setopt( curl, CURLOPT_WRITEDATA, strTemp2);
+
+    curl_easy_perform( curl );
+    curl_easy_getinfo( curl, CURLINFO_RESPONSE_CODE, &httpCode);
+    curl_easy_cleanup( curl );
+
+    if ( httpCode == 200 )
+        cout << "succussful get from twitch" << endl;
+
+    else
+    {
+        cout << httpCode;
+        cout << " unsuccessful get from twitch" << endl;
+        return "error";
+    }
+
+    curl_global_cleanup();
+    
+
+    return strTemp2;
+}

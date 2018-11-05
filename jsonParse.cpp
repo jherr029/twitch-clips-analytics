@@ -32,7 +32,7 @@ vector<string> redditJsonParse( Document & jsonDocument )
 {
     vector<string> jsonVec;
     int entries = jsonDocument["data"]["dist"].GetInt();
-    cout << "Number of entries : " << entries << endl; 
+    // cout << "Number of entries : " << entries << endl; 
 
     Value & temp = jsonDocument["data"]["children"];
     string url;
@@ -45,7 +45,7 @@ vector<string> redditJsonParse( Document & jsonDocument )
             jsonVec.push_back( url );
     }
 
-    cout << "added stuff to the vector: " << jsonVec.size() << endl;
+    // cout << "added stuff to the vector: " << jsonVec.size() << endl;
 
     return jsonVec;
 }

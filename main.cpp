@@ -16,12 +16,15 @@ int main()
     parseDoc( jsonDoc );
     // // prettyPrint( jsonDoc );
     
-    // vector<string> twitchSlugs = redditJsonParse( jsonDoc );
+    vector<string> twitchSlugs = redditJsonParse( jsonDoc );
+
+    string unParsedJson2 = curlGetJsonTwitch();
+    cout << unParsedJson2 << endl;
     // getSlug( twitchSlugs );
     // vector<string> strVec = getSlug(temp);
 
     // for ( const auto & element : temp )
-    // {
+    // {k
     //     cout << element << endl;
     // }
 
