@@ -8,7 +8,7 @@ std::vector<std::string> getInfo();
 std::string curlGetJsonReddit();
 
 std::string getInfoTwitch();
-std::string curlGetJsonTwitch();
+std::string curlGetJsonTwitch( std::string );
 // std::string requestGetJson();
 
 #endif

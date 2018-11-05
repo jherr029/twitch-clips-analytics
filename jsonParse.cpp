@@ -25,7 +25,7 @@ void prettyPrint( Document & jsonDocument )
     PrettyWriter<StringBuffer> writer(buffer);
     jsonDocument.Accept(writer);
 
-    cout << buffer.GetString() << endl;
+    cout << buffer.GetString() << endl << endl;
 }
 
 vector<string> redditJsonParse( Document & jsonDocument )
@@ -42,7 +42,7 @@ vector<string> redditJsonParse( Document & jsonDocument )
         url = temp[i]["data"]["url"].GetString();
         // cout << slug << endl;
         if ( url.find( "twitch.tv" ) != string::npos )
-            jsonVec.push_back( url );
+            jsonVec.push_back( getSlug( url ) );
     }
 
     // cout << "added stuff to the vector: " << jsonVec.size() << endl;
@@ -50,10 +50,14 @@ vector<string> redditJsonParse( Document & jsonDocument )
     return jsonVec;
 }
 
-void getSlug( vector<string> vec )
+string getSlug( string url )
 {
-    for ( auto slug : vec )
-        cout << slug << endl;
+    // a not banned user
+    if ( url.find("clip") )
+        return url.substr( 24 );
+
+    else
+        return "banned";
 
 }
 

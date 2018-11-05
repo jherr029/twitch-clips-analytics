@@ -13,7 +13,7 @@ void parseDoc( Document & );
 void prettyPrint( Document & );
 
 vector<string> redditJsonParse( Document & );
-void getSlug( vector<string> );
+string getSlug( string );
 
 vector<vector<string> > twitchJsonParse( vector<string> );
 

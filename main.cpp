@@ -13,21 +13,22 @@ int main()
     
     string unParsedJson = curlGetJsonReddit();
     Document jsonDoc = createDocument( unParsedJson );
-    parseDoc( jsonDoc );
-    // // prettyPrint( jsonDoc );
+    cout << endl;
+
+    // parseDoc( jsonDoc );
+
+    // prettyPrint( jsonDoc );
     
     vector<string> twitchSlugs = redditJsonParse( jsonDoc );
+    cout << endl;
 
-    string unParsedJson2 = curlGetJsonTwitch();
-    cout << unParsedJson2 << endl;
-    // getSlug( twitchSlugs );
-    // vector<string> strVec = getSlug(temp);
+    for ( int i = 0; i < twitchSlugs.size(); i++ )
+    {
+        string unParsedJson2 = curlGetJsonTwitch( twitchSlugs[i] );
+        Document clipJson = createDocument( unParsedJson2 );
+        prettyPrint( clipJson );
 
-    // for ( const auto & element : temp )
-    // {k
-    //     cout << element << endl;
-    // }
+    }
 
-    
     return 0;
 }

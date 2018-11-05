@@ -101,15 +101,12 @@ string getInfoTwitch()
 
     getline( file, line );
 
-    cout << line << endl;
-
     return line;
 }
 
-string curlGetJsonTwitch()
+string curlGetJsonTwitch( string slug )
 {
     string strTemp2;
-
 
     string info = getInfoTwitch();
     struct curl_slist * list = NULL;
@@ -117,7 +114,7 @@ string curlGetJsonTwitch()
     string client = "Client-ID: " + info;
     list = curl_slist_append(list, client.c_str());
 
-    string urlTemp = "https://api.twitch.tv/helix/streams?game_id=33214";
+    string urlTemp = clipURL + slug;
 
     CURL * curl = curl_easy_init();
     CURLcode result; // to delete later
