@@ -2,7 +2,10 @@
 #define CURL_H_
 
 #include <iostream>
+#include <vector>
 
-std::string curlGetJson();
+std::vector<std::string> getInfo();
+std::string curlGetJsonReddit();
+// std::string requestGetJson();
 
 #endif

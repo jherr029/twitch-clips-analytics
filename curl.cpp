@@ -2,7 +2,9 @@
 #include "headers/extern.h"
 
 #include <curl/curl.h>
+#include <cpr/cpr.h>
 
+#include <fstream>
 
 using namespace std;
 
@@ -22,8 +24,32 @@ namespace
     }
 }
 
-string curlGetJson()
+vector<string> getInfo()
 {
+    string line;
+    vector<string> info;
+
+    ifstream infoFile;
+    infoFile.open("apiStuff");
+
+    while ( getline( infoFile, line ) )
+    {
+        // cout << line << endl;
+        info.push_back(line);
+    }
+
+    infoFile.close();
+
+    return info;
+}
+
+string curlGetJsonReddit()
+{
+
+    vector<string> info = getInfo();
+    string userInfo = info[0] + ":" + info[1];
+    cout << userInfo << endl;
+
     CURL * curl = curl_easy_init();
     CURLcode result; // to delete later
 
@@ -40,6 +66,8 @@ string curlGetJson()
 
     string strTemp;
 
+    curl_easy_setopt( curl, CURLOPT_USERPWD, userInfo.c_str() );
+    curl_easy_setopt( curl, CURLOPT_XOAUTH2_BEARER, info[3].c_str() );
     curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION, WriteCallback );
 
     curl_easy_setopt( curl, CURLOPT_WRITEDATA, strTemp);
@@ -62,3 +90,14 @@ string curlGetJson()
 
     return strTemp;
 }
+
+// string requestGetJson()
+// {
+//     string buffer;
+
+//     // auto temp = cpr::Get(cpr::Url{ redditURL });
+//     auto temp = cpr::Get(cpr::Url{"http://www.httpbin.org/get"});
+//     // cout << temp.text << endl;
+
+//     return buffer;
+// }
