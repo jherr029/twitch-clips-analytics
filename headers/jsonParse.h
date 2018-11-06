@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <rapidjson/document.h>
+#include <unordered_map>
 #include <vector>
 
 using namespace rapidjson;
@@ -15,7 +16,8 @@ void prettyPrint( Document & );
 vector<string> redditJsonParse( Document & );
 string getSlug( string );
 
-vector<vector<string> > twitchJsonParse( vector<string> );
+string twitchJsonParseID( Document & );
+unordered_map< string, string > twitchJsonParseChannel( Document & );
 
 
 

@@ -61,8 +61,37 @@ string getSlug( string url )
 
 }
 
-vector<vector<string> > twitchJsonParse( vector<string> slugs )
+string twitchJsonParseID( Document & jsonDoc )
 {
     // maybe use a vector of hasmhmaps
-    vector<vector<string> > vectorOfVec;
+    assert(jsonDoc["data"][0]["broadcaster_id"].IsString() );
+    // cout << jsonDoc["data"][0]["broadcaster_id"].GetString() << endl;
+
+    return jsonDoc["data"][0]["broadcaster_id"].GetString() ;
+}
+
+unordered_map< string, string > twitchJsonParseChannel( Document & jsonDoc )
+{
+    unordered_map<string, string> temp;
+
+    string name, game, broadcasterType;
+    int followersInt, viewsInt;
+
+    name = jsonDoc["display_name"].GetString();
+    followersInt = jsonDoc["followers"].GetInt();
+    viewsInt = jsonDoc["views"].GetInt();
+    game = jsonDoc["game"].GetString();
+    broadcasterType = jsonDoc["broadcaster_type"].GetString();
+
+    temp["display_name"] = name;
+    temp["followers"] = to_string( followersInt );
+    temp["views"] = to_string( viewsInt );
+    temp["game"] = game;
+    temp["broadcaster_type"] = broadcasterType;
+    
+    // cout << name << " " << to_string(followersInt) << " " << to_string(viewsInt) << " " << game << " " << broadcasterType << endl;
+    // cout << endl;
+
+    return temp;
+
 }
