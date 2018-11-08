@@ -16,7 +16,7 @@ void prettyPrint( Document & );
 vector<string> redditJsonParse( Document & );
 string getSlug( string );
 
-string twitchJsonParseID( Document & );
+unordered_map< string, string > twitchJsonParseClip( Document & );
 unordered_map< string, string > twitchJsonParseChannel( Document & );
 
 

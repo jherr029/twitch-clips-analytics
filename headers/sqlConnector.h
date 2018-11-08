@@ -5,9 +5,12 @@
 #include <cppconn/driver.h>
 #include <vector>
 
+// maybe make this into a class
+
+
 using namespace std;
 
-vector<string> getInfoSQL();
+// vector<string> getInfoSQL();
 
 void connectToDB();
 

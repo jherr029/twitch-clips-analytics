@@ -39,16 +39,16 @@ int main()
     //     // prettyPrint( clipDoc );
 
     //     // get id
-    //     string channelID = twitchJsonParseID( clipDoc );
-    //     cout << channelID  << " " << twitchSlugs[i] << endl;
-    //     string unParsedChannelJson = curlGetJsonTwitchChannel( channelID );
+    //     unordered_map< string, string > clipMap = twitchJsonParseClip( clipDoc );
+    //     // cout << channelID  << " " << twitchSlugs[i] << endl;
+    //     string unParsedChannelJson = curlGetJsonTwitchChannel( clipMap["id"] );
 
     //     Document channelDoc = createDocument( unParsedChannelJson );
     //     // prettyPrint( channelDoc );
 
     //     cout << "parse channel" << endl;
     //     unordered_map<string, string> channelMap = twitchJsonParseChannel( channelDoc );
-    //     channelMap["id"] = channelID;
+    //     channelMap["id"] = clipMap["id"];
 
     // }
 

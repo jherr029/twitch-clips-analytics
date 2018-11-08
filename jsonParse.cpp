@@ -61,13 +61,22 @@ string getSlug( string url )
 
 }
 
-string twitchJsonParseID( Document & jsonDoc )
+unordered_map< string, string > twitchJsonParseClip( Document & jsonDoc )
 {
-    // maybe use a vector of hasmhmaps
-    assert(jsonDoc["data"][0]["broadcaster_id"].IsString() );
+    unordered_map< string, string > tempMap;
+
+
+    prettyPrint(jsonDoc);
+    tempMap["id"] = jsonDoc["data"][0]["broadcaster_id"].GetString();
+    tempMap["name"] = jsonDoc["data"][0]["title"].GetString();
+    tempMap["viewers"] = to_string(jsonDoc["data"][0]["view_count"].GetInt());
+    tempMap["game_id"] = jsonDoc["data"][0]["game_id"].GetString();
+
+    // maybe here do another api call to get the name of the game
+    // assert(jsonDoc["data"][0]["broadcaster_id"].IsString() );
     // cout << jsonDoc["data"][0]["broadcaster_id"].GetString() << endl;
 
-    return jsonDoc["data"][0]["broadcaster_id"].GetString() ;
+    return tempMap;
 }
 
 unordered_map< string, string > twitchJsonParseChannel( Document & jsonDoc )
@@ -76,6 +85,8 @@ unordered_map< string, string > twitchJsonParseChannel( Document & jsonDoc )
 
     string name, game, broadcasterType;
     int followersInt, viewsInt;
+
+    // prettyPrint(jsonDoc);
 
     name = jsonDoc["display_name"].GetString();
     followersInt = jsonDoc["followers"].GetInt();
