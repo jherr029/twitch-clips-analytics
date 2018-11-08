@@ -3,15 +3,37 @@
 
 #include <cppconn/connection.h>
 #include <cppconn/driver.h>
+#include <cppconn/statement.h>
+#include <cppconn/resultset.h>
+#include <cppconn/exception.h>
+#include <cppconn/prepared_statement.h>
+#include <unordered_map>
 #include <vector>
 
-// maybe make this into a class
-
-
 using namespace std;
+using namespace sql;
 
-// vector<string> getInfoSQL();
 
-void connectToDB();
+class sqlConnector
+{
+    public:
+        sqlConnector();
+        ~sqlConnector();
+
+        void insertToChannelTable(unordered_map<string, string> );
+
+    private:
+        Driver * driver = nullptr;
+        Connection * conn = nullptr;
+        Statement * stmt = nullptr;
+        ResultSet * res = nullptr;
+        PreparedStatement * pstmt = nullptr;
+
+        vector<string> getInfoSQL();
+        void createTable(unordered_map<string, string> );
+        void insertToTable(unordered_map<string, string> );
+        void printExceptionInfo(SQLException &);
+};
+
 
 #endif

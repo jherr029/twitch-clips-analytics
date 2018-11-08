@@ -12,45 +12,46 @@ using namespace std;
 
 int main()
 {
-    connectToDB();
+    sqlConnector sqlcpp;
+
+    // sqlcpp.sampleCreate();
     
-    // string unParsedPageJson = curlGetJsonReddit();
-    // Document pageDoc = createDocument( unParsedPageJson );
-    // cout << endl;
+    string unParsedPageJson = curlGetJsonReddit();
+    Document pageDoc = createDocument( unParsedPageJson );
+    cout << endl;
 
-    // vector<string> twitchSlugs = redditJsonParse( pageDoc );
-    // cout << endl;
+    vector<string> twitchSlugs = redditJsonParse( pageDoc );
+    cout << endl;
 
-    // for ( int i = 0; i < twitchSlugs.size(); i++ )
-    // {
+    for ( int i = 0; i < twitchSlugs.size(); i++ )
+    {
 
-    //     // cout << i + 1 << " - " << twitchSlugs[i] << endl;
-    //     if (twitchSlugs[i] == "banned" )
-    //     {
-    //         cout << "this is a banned or missing account " << endl;
-    //         continue;
-    //     }
+        if (twitchSlugs[i] == "banned" )
+        {
+            cout << "this is a banned or missing account " << endl;
+            continue;
+        }
 
-    //     string unParsedClipJson = curlGetJsonTwitchClip( twitchSlugs[i] );
+        string unParsedClipJson = curlGetJsonTwitchClip( twitchSlugs[i] );
 
+        // convert to json
+        Document clipDoc = createDocument( unParsedClipJson );
+        // prettyPrint( clipDoc );
 
-    //     // convert to json
-    //     Document clipDoc = createDocument( unParsedClipJson );
-    //     // prettyPrint( clipDoc );
+        unordered_map< string, string > clipMap = twitchJsonParseClip( clipDoc );
+        string unParsedChannelJson = curlGetJsonTwitchChannel( clipMap["id"] );
 
-    //     // get id
-    //     unordered_map< string, string > clipMap = twitchJsonParseClip( clipDoc );
-    //     // cout << channelID  << " " << twitchSlugs[i] << endl;
-    //     string unParsedChannelJson = curlGetJsonTwitchChannel( clipMap["id"] );
+        Document channelDoc = createDocument( unParsedChannelJson );
+        // prettyPrint( channelDoc );
 
-    //     Document channelDoc = createDocument( unParsedChannelJson );
-    //     // prettyPrint( channelDoc );
+        unordered_map<string, string> channelMap = twitchJsonParseChannel( channelDoc );
+        channelMap["id"] = clipMap["id"];
 
-    //     cout << "parse channel" << endl;
-    //     unordered_map<string, string> channelMap = twitchJsonParseChannel( channelDoc );
-    //     channelMap["id"] = clipMap["id"];
+        cout << endl;
 
-    // }
+        sqlcpp.insertToChannelTable(channelMap);
+
+    }
 
     return 0;
 }

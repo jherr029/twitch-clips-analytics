@@ -65,16 +65,13 @@ unordered_map< string, string > twitchJsonParseClip( Document & jsonDoc )
 {
     unordered_map< string, string > tempMap;
 
-
-    prettyPrint(jsonDoc);
+    // prettyPrint(jsonDoc);
     tempMap["id"] = jsonDoc["data"][0]["broadcaster_id"].GetString();
     tempMap["name"] = jsonDoc["data"][0]["title"].GetString();
     tempMap["viewers"] = to_string(jsonDoc["data"][0]["view_count"].GetInt());
     tempMap["game_id"] = jsonDoc["data"][0]["game_id"].GetString();
 
     // maybe here do another api call to get the name of the game
-    // assert(jsonDoc["data"][0]["broadcaster_id"].IsString() );
-    // cout << jsonDoc["data"][0]["broadcaster_id"].GetString() << endl;
 
     return tempMap;
 }
@@ -86,22 +83,20 @@ unordered_map< string, string > twitchJsonParseChannel( Document & jsonDoc )
     string name, game, broadcasterType;
     int followersInt, viewsInt;
 
-    // prettyPrint(jsonDoc);
-
     name = jsonDoc["display_name"].GetString();
     followersInt = jsonDoc["followers"].GetInt();
     viewsInt = jsonDoc["views"].GetInt();
     game = jsonDoc["game"].GetString();
     broadcasterType = jsonDoc["broadcaster_type"].GetString();
 
+    if ( broadcasterType == "" )
+        broadcasterType == "nonpartner";
+
     temp["display_name"] = name;
     temp["followers"] = to_string( followersInt );
     temp["views"] = to_string( viewsInt );
     temp["game"] = game;
     temp["broadcaster_type"] = broadcasterType;
-    
-    // cout << name << " " << to_string(followersInt) << " " << to_string(viewsInt) << " " << game << " " << broadcasterType << endl;
-    // cout << endl;
 
     return temp;
 
