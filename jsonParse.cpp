@@ -52,9 +52,18 @@ vector<string> redditJsonParse( Document & jsonDocument )
 
 string getSlug( string url )
 {
+    int positionOfQ;
+
     // a not banned user
     if ( url.find("clip") )
-        return url.substr( 24 );
+    {
+        if ( positionOfQ = url.find("?") )
+            return url.substr( 24, positionOfQ - 24 );
+
+        else
+            return url.substr( 24 );
+
+    }
 
     else
         return "banned";
@@ -89,8 +98,8 @@ unordered_map< string, string > twitchJsonParseChannel( Document & jsonDoc )
     game = jsonDoc["game"].GetString();
     broadcasterType = jsonDoc["broadcaster_type"].GetString();
 
-    if ( broadcasterType == "" )
-        broadcasterType == "nonpartner";
+    if ( broadcasterType.size() == 0 )
+        broadcasterType = "normal";
 
     temp["display_name"] = name;
     temp["followers"] = to_string( followersInt );

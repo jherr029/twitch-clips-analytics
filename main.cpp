@@ -36,12 +36,14 @@ int main()
 
         // convert to json
         Document clipDoc = createDocument( unParsedClipJson );
+        cout << twitchSlugs[i] << endl;
         // prettyPrint( clipDoc );
 
         unordered_map< string, string > clipMap = twitchJsonParseClip( clipDoc );
         string unParsedChannelJson = curlGetJsonTwitchChannel( clipMap["id"] );
 
         Document channelDoc = createDocument( unParsedChannelJson );
+        cout << channelDoc["display_name"].GetString() << endl;
         // prettyPrint( channelDoc );
 
         unordered_map<string, string> channelMap = twitchJsonParseChannel( channelDoc );

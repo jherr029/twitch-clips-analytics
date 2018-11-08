@@ -6,7 +6,7 @@ using namespace sql;
 
 string uniqueTable = "create table if not exists ";
 string insert = "insert into ";
-string channelParam = "(name, _id, type) values (?, ?, ?)";
+string channelParam = "(name, id, type) values (?, ?, ?)";
 
 sqlConnector::sqlConnector()
 {

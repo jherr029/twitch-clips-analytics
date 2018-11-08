@@ -148,7 +148,7 @@ string curlGetJsonTwitchClip( string slug )
     curl_easy_cleanup( curl );
 
     if ( httpCode == 200 )
-        cout << "succussful get from twitch clip" << endl;
+        cout << "succussful get from twitch clip ";
 
     else
     {
@@ -206,7 +206,7 @@ string curlGetJsonTwitchChannel( string id )
     curl_easy_cleanup( curl );
 
     if ( httpCode == 200 )
-        cout << "succussful get from twitch channel" << endl;
+        cout << "succussful get from twitch channel ";
 
     else
     {
