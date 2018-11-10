@@ -74,6 +74,22 @@ unordered_map< string, string > twitchJsonParseClip( Document & jsonDoc )
 {
     unordered_map< string, string > tempMap;
 
+    Value & tempValue = jsonDoc["data"];
+
+    // TODO: Need to handle when an account is banned
+    // Two scenarios I am aware of
+    // If this is the first time encourtering the streamer
+    // then the program is unware of who the streamer is 
+    // maybe the Name can be gathered a different way
+    //
+    // 2nd, I know who the streamer is, need to change the status as
+    // banned. Maybe return a different hashmap with the size of one
+    if ( tempValue.Size() == 0 )
+    {
+        // cout << "NULL" << endl;
+        return tempMap;
+    }
+
     // prettyPrint(jsonDoc);
     tempMap["id"] = jsonDoc["data"][0]["broadcaster_id"].GetString();
     tempMap["name"] = jsonDoc["data"][0]["title"].GetString();
@@ -92,10 +108,21 @@ unordered_map< string, string > twitchJsonParseChannel( Document & jsonDoc )
     string name, game, broadcasterType;
     int followersInt, viewsInt;
 
+
     name = jsonDoc["display_name"].GetString();
     followersInt = jsonDoc["followers"].GetInt();
     viewsInt = jsonDoc["views"].GetInt();
-    game = jsonDoc["game"].GetString();
+
+    Value & tempValue = jsonDoc["game"];
+    if ( tempValue.IsNull() )   // in case the streamer has not provided what game they are playing
+    {
+        cout << "value is null for game" << endl;
+        game = "n/a";
+    }
+
+    else
+        game = jsonDoc["game"].GetString();
+
     broadcasterType = jsonDoc["broadcaster_type"].GetString();
 
     if ( broadcasterType.size() == 0 )

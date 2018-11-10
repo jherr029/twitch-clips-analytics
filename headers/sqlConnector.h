@@ -21,6 +21,7 @@ class sqlConnector
         ~sqlConnector();
 
         void insertToChannelTable(unordered_map<string, string> );
+        void createClipTable(unordered_map<string, string> );
 
     private:
         Driver * driver = nullptr;
@@ -30,7 +31,6 @@ class sqlConnector
         PreparedStatement * pstmt = nullptr;
 
         vector<string> getInfoSQL();
-        void createTable(unordered_map<string, string> );
         void insertToTable(unordered_map<string, string> );
         void printExceptionInfo(SQLException &);
 };

@@ -40,6 +40,13 @@ int main()
         // prettyPrint( clipDoc );
 
         unordered_map< string, string > clipMap = twitchJsonParseClip( clipDoc );
+
+        if ( clipMap.size() == 0 )
+        {
+            cout << "empty map" << endl;
+            continue;
+        }
+
         string unParsedChannelJson = curlGetJsonTwitchChannel( clipMap["id"] );
 
         Document channelDoc = createDocument( unParsedChannelJson );

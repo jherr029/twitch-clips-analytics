@@ -53,16 +53,9 @@ vector<string> sqlConnector::getInfoSQL()
 
 }
 
-void sqlConnector::createTable( unordered_map<string, string> channelMap )
-{
-    // stmt->execute( uniqueTable + channelMap["display_name"] + )
-
-}
 
 void sqlConnector::insertToChannelTable( unordered_map<string, string> channelMap )
 {
-    // TODO: handle better exception when duplicate exist
-    // TODO: for null braodcaster_type say false
     try
     {
         pstmt = conn->prepareStatement( insert + "channels" + channelParam );
@@ -80,6 +73,12 @@ void sqlConnector::insertToChannelTable( unordered_map<string, string> channelMa
         if (e.getErrorCode() != 1062)
             printExceptionInfo(e);
     }
+
+}
+
+void sqlConnector::createClipTable( unordered_map<string, string> channelMap )
+{
+    // stmt->execute( uniqueTable  "" )
 
 }
 
