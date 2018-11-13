@@ -22,6 +22,7 @@ class sqlConnector
 
         void insertToChannelTable(unordered_map<string, string> );
         void insertToChannelDataTable( unordered_map<string, string> );
+        void insertToSlugDataTable( unordered_map<string, string>);
         void createClipTable(unordered_map<string, string> );
 
     private:
@@ -30,6 +31,10 @@ class sqlConnector
         Statement * stmt = nullptr;
         ResultSet * res = nullptr;
         PreparedStatement * pstmt = nullptr;
+
+        unordered_map<string, bool> recentChannels; // check what is the default value
+        // create a recentChannelsMap
+
 
         vector<string> getInfoSQL();
         void insertToTable(unordered_map<string, string> );

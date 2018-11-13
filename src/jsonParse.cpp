@@ -90,11 +90,18 @@ unordered_map< string, string > twitchJsonParseClip( Document & jsonDoc )
         return tempMap;
     }
 
+    // Convert this to Value & to avoid ["data"][0]
+
     // prettyPrint(jsonDoc);
     tempMap["id"] = jsonDoc["data"][0]["broadcaster_id"].GetString();
-    tempMap["name"] = jsonDoc["data"][0]["title"].GetString();
-    tempMap["viewers"] = to_string(jsonDoc["data"][0]["view_count"].GetInt());
+    tempMap["title"] = jsonDoc["data"][0]["title"].GetString();
+    tempMap["views"] = to_string(jsonDoc["data"][0]["view_count"].GetInt());
     tempMap["game_id"] = jsonDoc["data"][0]["game_id"].GetString();
+
+    string dateTime = jsonDoc["data"][0]["created_at"].GetString();
+    vector<string> dateTimeVec = parseTimeDate(dateTime);
+    tempMap["date"] = dateTimeVec[0];
+    tempMap["time"] = dateTimeVec[1];
 
     // maybe here do another api call to get the name of the game
 
@@ -150,7 +157,7 @@ unordered_map< string, string > twitchJsonParseChannel( Document & jsonDoc )
 }
 
 // TODO: convert all vectors to array since content is fixed
-vector<string> parseTimeDate(string timeDate )
+vector<string> parseTimeDate( string timeDate )
 {
     vector<string> temp;
 
@@ -161,8 +168,7 @@ vector<string> parseTimeDate(string timeDate )
     temp.push_back(date);
     temp.push_back(timeValUTC);
 
-    cout << date << " - - - " << timeValUTC << endl;
+    // cout << date << " - - - " << timeValUTC << endl;
 
     return temp;
-
 }

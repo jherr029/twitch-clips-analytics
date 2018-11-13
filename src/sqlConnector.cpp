@@ -8,6 +8,8 @@ string uniqueTable = "create table if not exists ";
 string insert = "insert into ";
 string channelParam = "(name, id, type) values (?, ?, ?)";
 string channelDataParam = "(name, game, views, followers, date, time) values (?, ?, ?, ?, ?, ?)";
+string slugParam = "(name, title, views, date_created, time_created) values (?, ?, ?, ?, ?)";
+// if inserting into all columns of a table then no need to name the columns
 
 sqlConnector::sqlConnector()
 {
@@ -103,6 +105,27 @@ void sqlConnector::insertToChannelDataTable( unordered_map<string, string> chann
     }
 
 }
+
+void sqlConnector::insertToSlugDataTable( unordered_map<string, string> slugMap )
+{
+    try
+    {
+        pstmt = conn->prepareStatement( insert + "slugs_data" + slugParam );
+        pstmt->setString(1, slugMap["name"]);   // stick to either display_name or name
+        pstmt->setString(2, slugMap["title"]);
+        pstmt->setString(3, slugMap["views"]);   // may get error here
+        pstmt->setString(4, slugMap["date"]);   // here
+        pstmt->setString(5, slugMap["time"]);    // here
+        pstmt->execute();
+
+        pstmt->clearParameters();
+    }
+
+    catch ( SQLException & e )
+    {
+        printExceptionInfo(e);
+    }
+} 
 
 void sqlConnector::createClipTable( unordered_map<string, string> channelMap )
 {

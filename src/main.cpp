@@ -59,8 +59,11 @@ int main()
 
         cout << endl;
 
+        clipMap["name"] = channelMap["display_name"];
+
         sqlcpp.insertToChannelTable(channelMap);
         sqlcpp.insertToChannelDataTable(channelMap);
+        sqlcpp.insertToSlugDataTable(clipMap);
 
     }
 
