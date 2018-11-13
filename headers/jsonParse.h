@@ -16,6 +16,8 @@ void prettyPrint( Document & );
 vector<string> redditJsonParse( Document & );
 string getSlug( string );
 
+vector<string> parseTimeDate(string );
+
 unordered_map< string, string > twitchJsonParseClip( Document & );
 unordered_map< string, string > twitchJsonParseChannel( Document & );
 

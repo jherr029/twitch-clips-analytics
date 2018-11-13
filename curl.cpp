@@ -1,5 +1,5 @@
-#include "headers/curl.h"
-#include "headers/extern.h"
+#include "../headers/curl.h"
+#include "../headers/extern.h"
 
 #include <curl/curl.h>
 #include <cpr/cpr.h>
@@ -30,7 +30,7 @@ vector<string> getInfo()
     vector<string> info;
 
     ifstream infoFile;
-    infoFile.open("apiStuff");
+    infoFile.open("../info/apiStuff");
 
     while ( getline( infoFile, line ) )
     {
@@ -95,7 +95,7 @@ string curlGetJsonReddit()
 vector<string> getInfoTwitch()
 {
     ifstream file;
-    file.open("twitchApi");
+    file.open("../info/twitchApi");
 
     string line;
     vector<string> temp;

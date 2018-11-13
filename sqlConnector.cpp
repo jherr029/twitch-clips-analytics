@@ -1,4 +1,4 @@
-#include "headers/sqlConnector.h"
+#include "../headers/sqlConnector.h"
 #include <fstream>
 #include <string>
 
@@ -7,6 +7,7 @@ using namespace sql;
 string uniqueTable = "create table if not exists ";
 string insert = "insert into ";
 string channelParam = "(name, id, type) values (?, ?, ?)";
+string channelDataParam = "(name, game, views, followers, date, time) values (?, ?, ?, ?, ?, ?)";
 
 sqlConnector::sqlConnector()
 {
@@ -40,7 +41,7 @@ vector<string> sqlConnector::getInfoSQL()
     vector<string> info;
 
     ifstream infoFile;
-    infoFile.open("mysqlStuff");
+    infoFile.open("../info/mysqlStuff");
 
     while ( getline( infoFile, line ) )
     {
@@ -72,6 +73,33 @@ void sqlConnector::insertToChannelTable( unordered_map<string, string> channelMa
         // if not duplicate
         if (e.getErrorCode() != 1062)
             printExceptionInfo(e);
+    }
+
+}
+
+// TODO: fix problem where if a streamer already exist in the map to avoid updating the table again
+// this can be done in two ways. Use a hashmap for recent inserts or check the dates within the table
+// 2nd option seems slower
+void sqlConnector::insertToChannelDataTable( unordered_map<string, string> channelMap )
+{
+    try
+    {
+        pstmt = conn->prepareStatement( insert + "channel_data" + channelDataParam );
+        pstmt->setString(1, channelMap["display_name"]);
+        pstmt->setString(2, channelMap["game"]);
+        pstmt->setString(3, channelMap["views"]);   // may get error here
+        pstmt->setString(4, channelMap["followers"]);   // here
+        pstmt->setString(5, channelMap["date"]);    // here
+        pstmt->setString(6, channelMap["time"]);    // here
+        pstmt->execute();
+
+        pstmt->clearParameters();
+        
+
+    }
+    catch ( SQLException & e )
+    {
+        printExceptionInfo(e);
     }
 
 }

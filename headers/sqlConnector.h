@@ -21,6 +21,7 @@ class sqlConnector
         ~sqlConnector();
 
         void insertToChannelTable(unordered_map<string, string> );
+        void insertToChannelDataTable( unordered_map<string, string> );
         void createClipTable(unordered_map<string, string> );
 
     private:

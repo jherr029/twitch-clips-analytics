@@ -1,4 +1,4 @@
-#include "headers/jsonParse.h"
+#include "../headers/jsonParse.h"
 
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
@@ -101,23 +101,30 @@ unordered_map< string, string > twitchJsonParseClip( Document & jsonDoc )
     return tempMap;
 }
 
+// TODO: Handle special characters for name of the streamer
+// https://stackoverflow.com/questions/5906585/how-to-change-the-default-collation-of-a-database
+// the solution
+
 unordered_map< string, string > twitchJsonParseChannel( Document & jsonDoc )
 {
     unordered_map<string, string> temp;
 
-    string name, game, broadcasterType;
+    string name, game, broadcasterType, dateTime;
     int followersInt, viewsInt;
 
 
     name = jsonDoc["display_name"].GetString();
     followersInt = jsonDoc["followers"].GetInt();
     viewsInt = jsonDoc["views"].GetInt();
+    dateTime = jsonDoc["updated_at"].GetString();
+
+    // parse date time and convert utc to pacific time
 
     Value & tempValue = jsonDoc["game"];
     if ( tempValue.IsNull() )   // in case the streamer has not provided what game they are playing
     {
         cout << "value is null for game" << endl;
-        game = "n/a";
+        game = "n/a";   // the n/a may indicate also that the current channel is not live
     }
 
     else
@@ -133,6 +140,28 @@ unordered_map< string, string > twitchJsonParseChannel( Document & jsonDoc )
     temp["views"] = to_string( viewsInt );
     temp["game"] = game;
     temp["broadcaster_type"] = broadcasterType;
+
+    vector<string> dateTimeParsed = parseTimeDate(dateTime);
+
+    temp["date"] = dateTimeParsed[0];
+    temp["time"] = dateTimeParsed[1];
+
+    return temp;
+}
+
+// TODO: convert all vectors to array since content is fixed
+vector<string> parseTimeDate(string timeDate )
+{
+    vector<string> temp;
+
+    string date = timeDate.substr(0, 10);
+    string timeValUTC = timeDate.substr(11, 8);
+    // timeValUTC.erase(timeValUTC.end());
+
+    temp.push_back(date);
+    temp.push_back(timeValUTC);
+
+    cout << date << " - - - " << timeValUTC << endl;
 
     return temp;
 

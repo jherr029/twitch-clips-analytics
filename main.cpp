@@ -4,9 +4,9 @@
 #include <cstdint>
 
 
-#include "headers/curl.h"
-#include "headers/jsonParse.h"
-#include "headers/sqlConnector.h"
+#include "../headers/curl.h"
+#include "../headers/jsonParse.h"
+#include "../headers/sqlConnector.h"
 
 using namespace std;
 
@@ -52,6 +52,7 @@ int main()
         Document channelDoc = createDocument( unParsedChannelJson );
         cout << channelDoc["display_name"].GetString() << endl;
         // prettyPrint( channelDoc );
+        
 
         unordered_map<string, string> channelMap = twitchJsonParseChannel( channelDoc );
         channelMap["id"] = clipMap["id"];
@@ -59,6 +60,7 @@ int main()
         cout << endl;
 
         sqlcpp.insertToChannelTable(channelMap);
+        sqlcpp.insertToChannelDataTable(channelMap);
 
     }
 
