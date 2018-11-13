@@ -10,36 +10,22 @@
 
 using namespace std;
 
+vector<string> redditClipsHandler();
+unordered_map<string, string> createClipMap( string slug );
+unordered_map<string, string> createChannelMap( string id );
+void sqlChannelInsertions( unordered_map<string, string> dataMap, sqlConnector sqlcpp );
+void sqlClipInsertions( unordered_map<string, string> dataMap, sqlConnector sqlcpp );
+
 int main()
 {
     sqlConnector sqlcpp;
 
-    // sqlcpp.sampleCreate();
-    
-    string unParsedPageJson = curlGetJsonReddit();
-    Document pageDoc = createDocument( unParsedPageJson );
-    cout << endl;
+    vector<string> slugs = redditClipsHandler();
 
-    vector<string> twitchSlugs = redditJsonParse( pageDoc );
-    cout << endl;
-
-    for ( int i = 0; i < twitchSlugs.size(); i++ )
+    for ( int i = 0; i < slugs.size(); i++ )
     {
-
-        if (twitchSlugs[i] == "banned" )
-        {
-            cout << "this is a banned or missing account " << endl;
-            continue;
-        }
-
-        string unParsedClipJson = curlGetJsonTwitchClip( twitchSlugs[i] );
-
-        // convert to json
-        Document clipDoc = createDocument( unParsedClipJson );
-        cout << twitchSlugs[i] << endl;
-        // prettyPrint( clipDoc );
-
-        unordered_map< string, string > clipMap = twitchJsonParseClip( clipDoc );
+        unordered_map<string, string> clipMap = createClipMap( slugs[i] );
+        cout << slugs[i] << endl;
 
         if ( clipMap.size() == 0 )
         {
@@ -47,25 +33,76 @@ int main()
             continue;
         }
 
-        string unParsedChannelJson = curlGetJsonTwitchChannel( clipMap["id"] );
+        unordered_map<string, string> channelMap = createChannelMap( clipMap["id"] );
+        cout << channelMap["display_name"] << endl;
 
-        Document channelDoc = createDocument( unParsedChannelJson );
-        cout << channelDoc["display_name"].GetString() << endl;
-        // prettyPrint( channelDoc );
-        
-
-        unordered_map<string, string> channelMap = twitchJsonParseChannel( channelDoc );
         channelMap["id"] = clipMap["id"];
+        clipMap["name"] = channelMap["display_name"];
 
         cout << endl;
 
-        clipMap["name"] = channelMap["display_name"];
-
-        sqlcpp.insertToChannelTable(channelMap);
-        sqlcpp.insertToChannelDataTable(channelMap);
-        sqlcpp.insertToSlugDataTable(clipMap);
+        // need to find figure out sqlConnector to work in functions
+        sqlcpp.insertToChannelTable( channelMap );
+        sqlcpp.insertToChannelDataTable( channelMap );
+        sqlcpp.insertToSlugDataTable( clipMap );
+        // sqlChannelInsertions( channelMap, sqlcpp );
+        // sqlClipInsertions( clipMap, sqlcpp );
 
     }
 
     return 0;
 }
+
+
+vector<string> redditClipsHandler()
+{
+    string unParsedPageJson = curlGetJsonReddit();
+    Document pageDoc = createDocument( unParsedPageJson );
+    cout << endl;
+
+    vector<string> twitchSlugs = redditJsonParse( pageDoc );
+    cout << endl;
+
+    return twitchSlugs;
+}
+
+unordered_map<string, string> createClipMap( string slug )
+{
+
+    string unParsedClipJson = curlGetJsonTwitchClip( slug );
+
+    // convert to json
+    Document clipDoc = createDocument( unParsedClipJson );
+    // prettyPrint( clipDoc );
+
+    unordered_map< string, string > clipMap = twitchJsonParseClip( clipDoc );
+
+    return clipMap;
+}
+
+unordered_map<string, string> createChannelMap( string id )
+{
+    string unParsedChannelJson = curlGetJsonTwitchChannel( id );
+
+    Document channelDoc = createDocument( unParsedChannelJson );
+    // prettyPrint( channelDoc );
+
+    unordered_map<string, string> channelMap = twitchJsonParseChannel( channelDoc );
+
+    return channelMap;
+}
+
+void sqlChannelInsertions( unordered_map<string, string> channelMap, sqlConnector sqlcpp )
+{
+    sqlcpp.insertToChannelTable( channelMap );
+    sqlcpp.insertToChannelDataTable( channelMap );
+    
+}
+
+void sqlClipInsertions( unordered_map<string, string> clipMap, sqlConnector sqlcpp )
+{
+    sqlcpp.insertToSlugDataTable( clipMap );
+}
+
+
+// TODO: be consistent with naming convention -> slug or clip. pick one

@@ -25,6 +25,8 @@ class sqlConnector
         void insertToSlugDataTable( unordered_map<string, string>);
         void createClipTable(unordered_map<string, string> );
 
+        void addToRecentChannelMap( string );
+
     private:
         Driver * driver = nullptr;
         Connection * conn = nullptr;
