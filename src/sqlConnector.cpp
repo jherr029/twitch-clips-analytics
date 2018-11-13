@@ -127,6 +127,17 @@ void sqlConnector::insertToSlugDataTable( unordered_map<string, string> slugMap 
     }
 } 
 
+void sqlConnector::addToRecentChannelMap( string channel )
+{
+    if ( recentChannels[channel] == false )
+        recentChannels[channel] = true;
+}
+
+bool sqlConnector::ifRecentChannel( string channel )
+{
+    return recentChannels[channel];
+}
+
 void sqlConnector::createClipTable( unordered_map<string, string> channelMap )
 {
     // stmt->execute( uniqueTable  "" )

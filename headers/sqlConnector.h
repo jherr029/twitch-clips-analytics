@@ -26,6 +26,7 @@ class sqlConnector
         void createClipTable(unordered_map<string, string> );
 
         void addToRecentChannelMap( string );
+        bool ifRecentChannel( string );
 
     private:
         Driver * driver = nullptr;

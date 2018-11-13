@@ -36,14 +36,25 @@ int main()
         unordered_map<string, string> channelMap = createChannelMap( clipMap["id"] );
         cout << channelMap["display_name"] << endl;
 
+
         channelMap["id"] = clipMap["id"];
         clipMap["name"] = channelMap["display_name"];
 
         cout << endl;
 
         // need to find figure out sqlConnector to work in functions
-        sqlcpp.insertToChannelTable( channelMap );
-        sqlcpp.insertToChannelDataTable( channelMap );
+
+        
+        // TODO:
+        // add something similar to this to avoid doing redundant api calls for recent
+        // stuff. This will have to be more specific than the sql version
+        if ( sqlcpp.ifRecentChannel( channelMap["display_name"] ) == 0 )
+        {
+            sqlcpp.insertToChannelTable( channelMap );
+            sqlcpp.insertToChannelDataTable( channelMap );
+            sqlcpp.addToRecentChannelMap( channelMap["display_name"] );
+        }
+
         sqlcpp.insertToSlugDataTable( clipMap );
         // sqlChannelInsertions( channelMap, sqlcpp );
         // sqlClipInsertions( clipMap, sqlcpp );
