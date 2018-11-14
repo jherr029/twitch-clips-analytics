@@ -154,6 +154,10 @@ string curlGetJsonTwitchClip( string slug )
     {
         cout << httpCode;
         cout << " unsuccessful get from twitch clip" << endl;
+
+        if ( httpCode == 429 )
+            return "too many calls";
+
         return "error";
     }
 

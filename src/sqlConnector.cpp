@@ -9,6 +9,7 @@ string insert = "insert into ";
 string channelParam = "(name, id, type) values (?, ?, ?)";
 string channelDataParam = "(name, game, views, followers, date, time) values (?, ?, ?, ?, ?, ?)";
 string slugParam = "(name, title, views, date_created, time_created) values (?, ?, ?, ?, ?)";
+string selectName = "select name from channels where id=";
 // if inserting into all columns of a table then no need to name the columns
 
 sqlConnector::sqlConnector()
@@ -30,6 +31,7 @@ sqlConnector::sqlConnector()
 
 sqlConnector::~sqlConnector()
 {
+    cout << "deconstructor is called" << endl;
     // delete driver;
     delete conn;
     delete stmt;
@@ -126,6 +128,29 @@ void sqlConnector::insertToSlugDataTable( unordered_map<string, string> slugMap 
         printExceptionInfo(e);
     }
 } 
+
+string sqlConnector::getNameFromID( string id )
+{
+    // cout << "get name from id - " << id << endl;
+    string name;
+    try
+    {
+        res = stmt->executeQuery(selectName + id);
+        while ( res->next() )
+        {
+            // cout << res->getString(1);
+            name = res->getString(1);
+        }
+        // res->next();
+
+    }
+    catch ( SQLException & e )
+    {
+        printExceptionInfo( e );
+    }
+
+    return name;
+}
 
 void sqlConnector::addToRecentChannelMap( string channel )
 {

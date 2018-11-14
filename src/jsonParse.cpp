@@ -130,7 +130,7 @@ unordered_map< string, string > twitchJsonParseChannel( Document & jsonDoc )
     Value & tempValue = jsonDoc["game"];
     if ( tempValue.IsNull() )   // in case the streamer has not provided what game they are playing
     {
-        cout << "value is null for game" << endl;
+        cout << "value is null for game ";
         game = "n/a";   // the n/a may indicate also that the current channel is not live
     }
 

@@ -28,6 +28,8 @@ class sqlConnector
         void addToRecentChannelMap( string );
         bool ifRecentChannel( string );
 
+        string getNameFromID( string );
+
     private:
         Driver * driver = nullptr;
         Connection * conn = nullptr;
