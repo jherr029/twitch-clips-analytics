@@ -18,6 +18,9 @@ void sqlClipInsertions( unordered_map<string, string> dataMap, sqlConnector sqlc
 
 bool ifError( unordered_map<string, string> dataMap );
 
+// TODO: Reduce the amount of api calls
+// use cache. refer to the db if necessary
+// use more then one id within one api call
 
 int main()
 {
@@ -63,7 +66,7 @@ int main()
             if ( sqlcpp.ifRecentChannel( channelMap["display_name"] ) == 0 )
             {
                 sqlcpp.insertToChannelTable( channelMap );
-                sqlcpp.insertToChannelDataTable( channelMap );
+                // sqlcpp.insertToChannelDataTable( channelMap );
                 sqlcpp.addToRecentChannelMap( channelMap["display_name"] );
             }
             else
@@ -71,7 +74,7 @@ int main()
                 cout << "skipped" << endl;
             }
 
-            sqlcpp.insertToSlugDataTable( clipMap );
+            // sqlcpp.insertToSlugDataTable( clipMap );
             // sqlChannelInsertions( channelMap, sqlcpp );
             // sqlClipInsertions( clipMap, sqlcpp );
 
@@ -84,7 +87,7 @@ int main()
             clipMap["name"] = name;
             cout << endl;
 
-            sqlcpp.insertToSlugDataTable( clipMap );
+            // sqlcpp.insertToSlugDataTable( clipMap );
 
         }
     }
@@ -172,3 +175,10 @@ void sqlClipInsertions( unordered_map<string, string> clipMap, sqlConnector sqlc
 
 
 // TODO: be consistent with naming convention -> slug or clip. pick one
+// TODO: get headers to get limit
+// TODO: get bearer authorization
+// TODO: understand and implement webhooks
+
+
+// https://curl.haxx.se/libcurl/c/CURLOPT_HEADERFUNCTION.html
+// use postman for the mean time in respects to getting headers
