@@ -1,4 +1,4 @@
-#include "../headers/sqlConnector.h"
+#include "../includes/sqlConnector.h"
 #include <fstream>
 #include <string>
 

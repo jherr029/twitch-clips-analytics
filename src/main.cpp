@@ -4,9 +4,9 @@
 #include <cstdint>
 
 
-#include "../headers/curl.h"
-#include "../headers/jsonParse.h"
-#include "../headers/sqlConnector.h"
+#include "../includes/curl.h"
+#include "../includes/jsonParse.h"
+#include "../includes/sqlConnector.h"
 
 using namespace std;
 

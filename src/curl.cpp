@@ -1,5 +1,5 @@
-#include "../headers/curl.h"
-#include "../headers/extern.h"
+#include "../includes/curl.h"
+#include "../includes/extern.h"
 
 #include <curl/curl.h>
 #include <cpr/cpr.h>
