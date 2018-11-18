@@ -46,8 +46,9 @@ vector<string> getInfo()
 string curlGetJsonReddit()
 {
 
-    vector<string> info = getInfo();
-    string userInfo = info[0] + ":" + info[1];
+    // vector<string> info = getInfo();
+    string userInfo = string(getenv("REDDIT_LOGIN")) + ":" + string(getenv("REDDIT_PASS"));
+    // string userInfo = info[0] + ":" + info[1];
     // cout << userInfo << endl;
 
     CURL * curl = curl_easy_init();
@@ -67,7 +68,7 @@ string curlGetJsonReddit()
     string strTemp;
 
     curl_easy_setopt( curl, CURLOPT_USERPWD, userInfo.c_str() );
-    curl_easy_setopt( curl, CURLOPT_XOAUTH2_BEARER, info[3].c_str() );
+    curl_easy_setopt( curl, CURLOPT_XOAUTH2_BEARER, getenv("REDDIT_KEY") );
     curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION, WriteCallback );
 
     curl_easy_setopt( curl, CURLOPT_WRITEDATA, strTemp);
@@ -111,14 +112,16 @@ vector<string> getInfoTwitch()
     return temp;
 }
 
+// TODO: convert strings to char*
 string curlGetJsonTwitchClip( string slug )
 {
     string strTemp2;
 
-    vector<string> info = getInfoTwitch();
+    // vector<string> info = getInfoTwitch();
     struct curl_slist * list = NULL;
 
-    string client = "Client-ID: " + info[0];
+    string client = "Client-ID: " + string(getenv("TWITCH_KEY"));
+    // string client = "Client-ID: " + ;
     list = curl_slist_append(list, client.c_str());
 
     string urlTemp = clipURL + slug;
@@ -171,16 +174,18 @@ string curlGetJsonTwitchChannel( string id )
 {
     string strTemp2;
 
-    vector<string> info = getInfoTwitch();
+    // vector<string> info = getInfoTwitch();
     struct curl_slist * list = NULL;
 
-    string client = "Client-ID: " + info[0];
+    // string client = "Client-ID: " + info[0];
+    string client = "Client-ID: " + string(getenv("TWITCH_KEY"));
     list = curl_slist_append(list, client.c_str());
 
     string accept = "Accept: application/vnd.twitchtv.v5+json";
     list = curl_slist_append(list, accept.c_str());
 
-    string auth = "Authorization: OAuth " + info[1];
+    string auth = "Authorization: OAuth " + string(getenv("TWITCH_SECRET"));
+    // string auth = "Authorization: OAuth " + info[1];
     list = curl_slist_append(list, auth.c_str());
 
     string urlTemp = channelURL + id;

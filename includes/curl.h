@@ -2,6 +2,7 @@
 #define CURL_H_
 
 #include <iostream>
+#include <stdlib.h>
 #include <vector>
 
 std::vector<std::string> getInfo();

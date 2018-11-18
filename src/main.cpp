@@ -75,9 +75,11 @@ int main()
             else
             {
                 // sqlcpp.insertToChannelDataTable( channelMap );
+                // check if this ever occurs
                 cout << "skipped" << endl;
             }
 
+            // the bellow may not be needed anymore
             // sqlcpp.insertToSlugDataTable( clipMap );
             // sqlChannelInsertions( channelMap, sqlcpp );
             // sqlClipInsertions( clipMap, sqlcpp );
