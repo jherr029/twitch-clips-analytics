@@ -22,6 +22,8 @@ bool ifError( unordered_map<string, string> dataMap );
 // use cache. refer to the db if necessary
 // use more then one id within one api call
 
+// TODO: implement enviromental vars
+
 int main()
 {
     sqlConnector sqlcpp;

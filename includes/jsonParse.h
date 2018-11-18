@@ -2,7 +2,8 @@
 #define JSONPARSE_H_
 
 #include <iostream>
-#include <rapidjson/document.h>
+#include "./rapidjson/document.h"
+// #include <rapidjson/document.h>
 #include <unordered_map>
 #include <vector>
 
