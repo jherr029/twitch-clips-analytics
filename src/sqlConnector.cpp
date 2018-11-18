@@ -1,5 +1,4 @@
 #include "../includes/sqlConnector.h"
-#include <fstream>
 #include <string>
 
 using namespace sql;
@@ -17,8 +16,6 @@ string selectName = "select name from channels where id=";
 
 sqlConnector::sqlConnector()
 {
-    vector<string> info = getInfoSQL();
-
     try
     {
         driver = get_driver_instance();
@@ -40,25 +37,6 @@ sqlConnector::~sqlConnector()
     delete stmt;
     delete res;
     delete pstmt;
-}
-
-vector<string> sqlConnector::getInfoSQL()
-{
-    string line;
-    vector<string> info;
-
-    ifstream infoFile;
-    infoFile.open("../info/mysqlStuff");
-
-    while ( getline( infoFile, line ) )
-    {
-        info.push_back(line);
-    }
-
-    infoFile.close();
-
-    return info;
-
 }
 
 

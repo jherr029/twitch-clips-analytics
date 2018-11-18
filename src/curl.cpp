@@ -4,8 +4,6 @@
 #include <curl/curl.h>
 #include <cpr/cpr.h>
 
-#include <fstream>
-
 using namespace std;
 
 namespace 
@@ -24,32 +22,10 @@ namespace
     }
 }
 
-vector<string> getInfo()
-{
-    string line;
-    vector<string> info;
-
-    ifstream infoFile;
-    infoFile.open("../info/apiStuff");
-
-    while ( getline( infoFile, line ) )
-    {
-        // cout << line << endl;
-        info.push_back(line);
-    }
-
-    infoFile.close();
-
-    return info;
-}
-
 string curlGetJsonReddit()
 {
 
-    // vector<string> info = getInfo();
     string userInfo = string(getenv("REDDIT_LOGIN")) + ":" + string(getenv("REDDIT_PASS"));
-    // string userInfo = info[0] + ":" + info[1];
-    // cout << userInfo << endl;
 
     CURL * curl = curl_easy_init();
     CURLcode result; // to delete later
@@ -92,36 +68,14 @@ string curlGetJsonReddit()
     return strTemp;
 }
 
-
-vector<string> getInfoTwitch()
-{
-    ifstream file;
-    file.open("../info/twitchApi");
-
-    string line;
-    vector<string> temp;
-
-    while ( getline( file, line ) )
-    {
-        // cout << line << endl;
-        temp.push_back(line);
-    }
-
-    file.close();
-
-    return temp;
-}
-
 // TODO: convert strings to char*
 string curlGetJsonTwitchClip( string slug )
 {
     string strTemp2;
 
-    // vector<string> info = getInfoTwitch();
     struct curl_slist * list = NULL;
 
     string client = "Client-ID: " + string(getenv("TWITCH_KEY"));
-    // string client = "Client-ID: " + ;
     list = curl_slist_append(list, client.c_str());
 
     string urlTemp = clipURL + slug;
@@ -174,7 +128,6 @@ string curlGetJsonTwitchChannel( string id )
 {
     string strTemp2;
 
-    // vector<string> info = getInfoTwitch();
     struct curl_slist * list = NULL;
 
     // string client = "Client-ID: " + info[0];

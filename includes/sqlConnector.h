@@ -41,8 +41,6 @@ class sqlConnector
         unordered_map<string, bool> recentChannels; // check what is the default value
         // create a recentChannelsMap
 
-
-        vector<string> getInfoSQL();
         void insertToTable(unordered_map<string, string> );
         void printExceptionInfo(SQLException &);
 };
