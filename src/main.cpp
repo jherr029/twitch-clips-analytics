@@ -68,11 +68,13 @@ int main()
             if ( sqlcpp.ifRecentChannel( channelMap["display_name"] ) == 0 )
             {
                 sqlcpp.insertToChannelTable( channelMap );
-                // sqlcpp.insertToChannelDataTable( channelMap );
+                sqlcpp.insertToChannelDataTable( channelMap );
                 sqlcpp.addToRecentChannelMap( channelMap["display_name"] );
+                sqlcpp.insertToSlugDataTable( clipMap );
             }
             else
             {
+                // sqlcpp.insertToChannelDataTable( channelMap );
                 cout << "skipped" << endl;
             }
 
@@ -89,7 +91,7 @@ int main()
             clipMap["name"] = name;
             cout << endl;
 
-            // sqlcpp.insertToSlugDataTable( clipMap );
+            sqlcpp.insertToSlugDataTable( clipMap );
 
         }
     }

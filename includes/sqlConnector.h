@@ -1,6 +1,7 @@
 #ifndef SQLCONNECTOR_H_
 #define SQLCONNECTOR_H_
 
+#include <stdlib.h>
 #include <cppconn/connection.h>
 #include <cppconn/driver.h>
 #include <cppconn/statement.h>

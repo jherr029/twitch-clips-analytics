@@ -12,6 +12,9 @@ string slugParam = "(name, title, views, date_created, time_created) values (?, 
 string selectName = "select name from channels where id=";
 // if inserting into all columns of a table then no need to name the columns
 
+
+// TODO: increase game varchar size to 30
+
 sqlConnector::sqlConnector()
 {
     vector<string> info = getInfoSQL();
@@ -19,7 +22,7 @@ sqlConnector::sqlConnector()
     try
     {
         driver = get_driver_instance();
-        conn = driver->connect(info[0], info[1], info[2]);
+        conn = driver->connect(getenv("MYSQL_SERVER"), getenv("MYSQL_LOGIN"), getenv("MYSQL_PASS"));
         conn->setSchema("lsf_test");
         stmt = conn->createStatement();
     }
