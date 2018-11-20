@@ -2,7 +2,6 @@
 #include "../includes/extern.h"
 
 #include <curl/curl.h>
-#include <cpr/cpr.h>
 
 using namespace std;
 

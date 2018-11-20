@@ -19,7 +19,7 @@ sqlConnector::sqlConnector()
     try
     {
         driver = get_driver_instance();
-        conn = driver->connect(getenv("MYSQL_SERVER"), getenv("MYSQL_LOGIN"), getenv("MYSQL_PASS"));
+        conn = driver->connect(getenv("MYSQL_SERVER_REMOTE"), getenv("MYSQL_LOGIN"), getenv("MYSQL_PASS"));
         conn->setSchema("lsf_test");
         stmt = conn->createStatement();
     }
