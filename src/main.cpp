@@ -26,6 +26,7 @@ bool ifError( unordered_map<string, string> dataMap );
 
 int main()
 {
+    cout << "starting" << endl;
     sqlConnector sqlcpp;
 
     vector<string> slugs = redditClipsHandler();
