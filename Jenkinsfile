@@ -1,8 +1,8 @@
 pipeline {
   agent {
     docker {
-      image 'cpp-app'
-      args '-it --rm -v $PWD:/app'
+      image 'jherr029/cpp-app:latest'
+      args '-it -v $PWD:/app'
     }
 
   }
@@ -10,22 +10,19 @@ pipeline {
     stage('Build') {
       steps {
         sh '''mkdir build
-sudo rm -r build/*
-cd build
-cmake .. && make
-../bin/lytics'''
+        cd build && cmake .. && make && ../bin/lytics'''
       }
     }
   }
-  environment {
-    REDDIT_LOGIN = '${env.REDDIT_LOGIN}'
-    REDDIT_PASS = '${env.REDDIT_PASS}'
-    REDDIT_SECRET = '${env.REDDIT_SECRET}'
-    REDDIT_KEY = '${env.REDDIT_KEY}'
-    TWITCH_KEY = '${env.TWITCH_KEY}'
-    TWITCH_SECRET = '${env.TWITCH_SECRET}'
-    MYSQL_SERVER_REMOTE = '${env.MYSQL_SERVER_REMOTE}'
-    MYSQL_LOGIN = '${env.MYSQL_LOGIN}'
-    MYSQL_PASS = '${env.MYSQL_PASS}'
-  }
+  // environment {
+  //   REDDIT_LOGIN = '${env.REDDIT_LOGIN}'
+  //   REDDIT_PASS = '${env.REDDIT_PASS}'
+  //   REDDIT_SECRET = '${env.REDDIT_SECRET}'
+  //   REDDIT_KEY = '${env.REDDIT_KEY}'
+  //   TWITCH_KEY = '${env.TWITCH_KEY}'
+  //   TWITCH_SECRET = '${env.TWITCH_SECRET}'
+  //   MYSQL_SERVER_REMOTE = '${env.MYSQL_SERVER_REMOTE}'
+  //   MYSQL_LOGIN = '${env.MYSQL_LOGIN}'
+  //   MYSQL_PASS = '${env.MYSQL_PASS}'
+  // }
 }
