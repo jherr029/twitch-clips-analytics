@@ -9,10 +9,11 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh '''sudo rm -r build/*;
-cd build/;
-cmake .. && make;
-../bin/lytics;'''
+        sh '''mkdir build
+sudo rm -r build/*
+cd build
+cmake .. && make
+../bin/lytics'''
       }
     }
   }
