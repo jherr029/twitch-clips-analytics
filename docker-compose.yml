@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+
+  cpp-app:
+    container_name: cpp_app
+    env_file:
+      - app-env.list
+    build:
+      context: ./docker
+    volumes:
+      - ./:/app
+    tty: true
+
+  django-app:
+    container_name: django_app
+    build:
+      context: ./python
+    env_file:
+      - app-env.list
+    volumes:
+      - ./python:/app
+    ports:
+      - 8000:8000
+
+  
