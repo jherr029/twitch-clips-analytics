@@ -7,6 +7,9 @@
 #include "../includes/curl.h"
 #include "../includes/jsonParse.h"
 #include "../includes/sqlConnector.h"
+#include "tests/test.hpp"
+
+#include <gtest/gtest.h>
 
 using namespace std;
 
@@ -24,10 +27,19 @@ bool ifError( unordered_map<string, string> dataMap );
 
 // TODO: implement enviromental vars
 
-int main()
+int main(int argc, char **argv)
 {
+
+    if ( strcmp(argv[1], "test") == 0 )
+    {
+        testing::InitGoogleTest(&argc, argv);
+        return RUN_ALL_TESTS();
+    }
+
     cout << "starting" << endl;
     sqlConnector sqlcpp;
+
+    cout << argv[1] << endl;
 
     vector<string> slugs = redditClipsHandler();
     unordered_map<string, bool> recentAPIcalls;
@@ -68,10 +80,13 @@ int main()
             // stuff. This will have to be more specific than the sql version
             if ( sqlcpp.ifRecentChannel( channelMap["display_name"] ) == 0 )
             {
-                sqlcpp.insertToChannelTable( channelMap );
-                sqlcpp.insertToChannelDataTable( channelMap );
-                sqlcpp.addToRecentChannelMap( channelMap["display_name"] );
-                sqlcpp.insertToSlugDataTable( clipMap );
+                if ( strcmp(argv[1], "prod") == 0 )
+                {
+                    sqlcpp.insertToChannelTable( channelMap );
+                    sqlcpp.insertToChannelDataTable( channelMap );
+                    sqlcpp.addToRecentChannelMap( channelMap["display_name"] );
+                    sqlcpp.insertToSlugDataTable( clipMap );
+                }
             }
             else
             {
@@ -82,7 +97,7 @@ int main()
 
             // the bellow may not be needed anymore
             // sqlcpp.insertToSlugDataTable( clipMap );
-            // sqlChannelInsertions( channelMap, sqlcpp );
+            // sqlChannelInserions( channelMap, sqlcpp );
             // sqlClipInsertions( clipMap, sqlcpp );
 
         }
@@ -94,7 +109,8 @@ int main()
             clipMap["name"] = name;
             cout << endl;
 
-            sqlcpp.insertToSlugDataTable( clipMap );
+            if ( strcmp(argv[1], "prod") == 0 )
+                sqlcpp.insertToSlugDataTable( clipMap );
 
         }
     }
