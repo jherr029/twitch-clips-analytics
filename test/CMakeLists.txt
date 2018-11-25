@@ -20,5 +20,5 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
 
 
 include_directories(${TEST_SOURCE_DIR}/src)
-add_executable(Test testMain.cpp)
-target_link_libraries(Test gtest_main pthread)
+add_executable(test testMain.cpp)
+target_link_libraries(test gtest_main pthread)
