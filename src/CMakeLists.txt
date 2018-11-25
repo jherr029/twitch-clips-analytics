@@ -1,6 +1,8 @@
 link_directories(/usr/include)
 set(CMAKE_CXX_STANDARD 11)
 
+include_directories(../includes/)
+
 add_library(Curl_ curl.cpp)
 add_library(Json jsonParse.cpp)
 add_library(Sql sqlConnector.cpp)
