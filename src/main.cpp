@@ -7,9 +7,9 @@
 #include "../includes/curl.h"
 #include "../includes/jsonParse.h"
 #include "../includes/sqlConnector.h"
-#include "tests/test.hpp"
+// #include "tests/test.hpp"
 
-#include <gtest/gtest.h>
+// #include <gtest/gtest.h>
 
 using namespace std;
 
@@ -30,11 +30,11 @@ bool ifError( unordered_map<string, string> dataMap );
 int main(int argc, char **argv)
 {
 
-    if ( strcmp(argv[1], "test") == 0 )
-    {
-        testing::InitGoogleTest(&argc, argv);
-        return RUN_ALL_TESTS();
-    }
+    // if ( strcmp(argv[1], "test") == 0 )
+    // {
+    //     testing::InitGoogleTest(&argc, argv);
+    //     return RUN_ALL_TESTS();
+    // }
 
     cout << "starting" << endl;
     sqlConnector sqlcpp;
