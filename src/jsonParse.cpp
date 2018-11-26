@@ -17,7 +17,6 @@ void jsonParse::createDocument( string unparsedStr )
     jsonDoc.Parse( unparsedStr.c_str() );
 }
 
-
 // void jsonParse::prettyPrint( )
 // {
 //     StringBuffer buffer;
@@ -172,4 +171,69 @@ vector<string> jsonParse::parseTimeDate( string & timeDate )
     // cout << date << " - - - " << timeValUTC << endl;
 
     return temp;
+}
+
+bool jsonParse::redditIsInt()
+{
+    return jsonDoc["data"]["dist"].IsInt();
+}
+
+bool jsonParse::redditIsArray()
+{
+    return jsonDoc["data"]["children"].IsArray();
+}
+
+bool jsonParse::redditIsString()
+{
+    return jsonDoc["data"]["children"][0]["data"]["url"].IsString();
+}
+
+bool jsonParse::twitchClipIsString_id()
+{
+    return jsonDoc["data"][0]["broadcaster_id"].IsString();
+}
+
+bool jsonParse::twitchClipIsString_title()
+{
+    return jsonDoc["data"][0]["title"].IsString();
+}
+
+bool jsonParse::twitchClipIsString_gameID()
+{
+    return jsonDoc["data"][0]["game_id"].IsString();
+}
+
+bool jsonParse::twitchClipIsString_createdAt()
+{
+    return jsonDoc["data"][0]["created_at"].IsString();
+}
+
+bool jsonParse::twitchClipIsInt_viewCount()
+{
+    return jsonDoc["data"][0]["view_count"].IsInt();
+}
+
+bool jsonParse::twitchChannelIsString_name()
+{
+    return jsonDoc["display_name"].IsString();
+}
+
+bool jsonParse::twitchChannelIsString_updatedAt()
+{
+    return jsonDoc["updated_at"].IsString();
+}
+
+bool jsonParse::twitchChannelIsString_type()
+{
+    return jsonDoc["broadcaster_type"].IsString();
+}
+
+bool jsonParse::twitchChannelIsInt_followers()
+{
+    return jsonDoc["followers"].IsInt();
+}
+
+bool jsonParse::twitchChannelIsInt_views()
+{
+    return jsonDoc["views"].IsInt();
 }

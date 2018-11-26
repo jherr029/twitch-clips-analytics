@@ -29,13 +29,6 @@ bool ifError( unordered_map<string, string> dataMap );
 
 int main(int argc, char **argv)
 {
-
-    // if ( strcmp(argv[1], "test") == 0 )
-    // {
-    //     testing::InitGoogleTest(&argc, argv);
-    //     return RUN_ALL_TESTS();
-    // }
-
     cout << "starting" << endl;
     sqlConnector sqlcpp;
 
@@ -188,7 +181,10 @@ unordered_map<string, string> createChannelMap( string id )
 bool ifError( unordered_map<string, string> dataMap )
 {
     if ( dataMap["error"] == "calls" )
+    {
+        cout << "there is an error" << endl;
         return true;
+    }
     
     return false;
 }

@@ -12,8 +12,6 @@ string selectName = "select name from channels where id=";
 // if inserting into all columns of a table then no need to name the columns
 
 
-// TODO: increase game varchar size to 30
-
 sqlConnector::sqlConnector()
 {
     try
@@ -31,8 +29,9 @@ sqlConnector::sqlConnector()
 
 sqlConnector::~sqlConnector()
 {
-    cout << "deconstructor is called" << endl;
-    // delete driver;
+    // cout << "deconstructor is called" << endl;
+    // delete driver; // is not needed, it is handled by the library
+    conn->close();
     delete conn;
     delete stmt;
     delete res;
@@ -162,4 +161,33 @@ void sqlConnector::printExceptionInfo(SQLException & e)
     cout << "SQL state: " << e.getSQLState() << endl;
     cout << string(100, '!') << endl;
     cout << endl;
+}
+
+bool sqlConnector::checkConnection()
+{
+    return conn->isValid();
+}
+
+bool sqlConnector::checkIfTableExist( string table )
+{
+    string x;
+
+    try
+    {
+        res = stmt->executeQuery("show tables like '" + table + "'");
+
+        while ( res->next() )
+        {
+            x = res->getString(1);
+        }
+    }
+    catch ( SQLException & e )
+    {
+        printExceptionInfo( e );
+    }
+
+    if ( x.size() != 0 )
+        return true;
+
+    return false;
 }

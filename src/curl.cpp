@@ -63,15 +63,15 @@ void curl::curlReddit()
     if ( httpCode == 200 )
     {
         stringResult = strTemp;
-        cout << "succussful get from reddit" << endl;
+        // cout << "succussful get from reddit" << endl;
 
     }
 
     else
     {
         stringResult = "NULL";
-        cout << "error" << endl;
-        cout << "unsuccessful get from reddit" << endl;
+        // cout << "error" << endl;
+        // cout << "unsuccessful get from reddit" << endl;
     }
 
     curl_global_cleanup();
@@ -126,17 +126,17 @@ void curl::curlTwitchClip( string slug )
     if ( httpCode == 200 )
     {
         stringResult = strTemp2;
-        cout << "succussful get from twitch clip ";
+        // cout << "succussful get from twitch clip ";
     }
 
     else
     {
         stringResult = "NULL";
-        cout << httpCode << " error ";
-        cout << " unsuccessful get from twitch clip" << endl;
+        // cout << httpCode << " error ";
+        // cout << " unsuccessful get from twitch clip" << endl;
 
-        if ( httpCode == 429 )
-            cout << "too many calls";
+        // if ( httpCode == 429 )
+            // cout << "too many calls";
 
     }
 
@@ -200,14 +200,14 @@ void curl::curlTwitchChannel( string id )
     if ( httpCode == 200 )
     {
         stringResult = strTemp2;
-        cout << "succussful get from twitch channel ";
+        // cout << "succussful get from twitch channel ";
     }
 
     else
     {
         stringResult = "NULL";
         cout << httpCode << " error";
-        cout << " unsuccessful get from twitch channel" << endl;
+        // cout << " unsuccessful get from twitch channel" << endl;
     }
 
     curl_global_cleanup();

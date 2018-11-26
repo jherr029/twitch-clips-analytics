@@ -20,6 +20,22 @@ class jsonParse
         vector<string> redditParse();
         unordered_map<string, string> twitchClipParse();
         unordered_map<string, string> twitchChannelParse();
+
+        bool redditIsInt();
+        bool redditIsArray();
+        bool redditIsString();
+
+        bool twitchClipIsString_id();
+        bool twitchClipIsString_title();
+        bool twitchClipIsString_gameID();
+        bool twitchClipIsString_createdAt();
+        bool twitchClipIsInt_viewCount();
+
+        bool twitchChannelIsString_name();
+        bool twitchChannelIsString_updatedAt();
+        bool twitchChannelIsString_type();
+        bool twitchChannelIsInt_followers();
+        bool twitchChannelIsInt_views();
     
     protected:
         Document jsonDoc;
