@@ -7,42 +7,40 @@
 #include <string>
 #include <array>
 
-Document createDocument( string & unparsedStr )
+jsonParse::jsonParse()
 {
-    Document jsonDocument;
-    jsonDocument.Parse( unparsedStr.c_str() );
-
-    return jsonDocument;
+    // cout << "jsonParse created" << endl;
 }
 
-
-void parseDoc( Document & jsonDocument )
+void jsonParse::createDocument( string unparsedStr )
 {
-    cout << jsonDocument["data"]["children"][5]["data"]["title"].GetString() << endl;
+    jsonDoc.Parse( unparsedStr.c_str() );
 }
 
-void prettyPrint( Document & jsonDocument )
-{
-    StringBuffer buffer;
-    PrettyWriter<StringBuffer> writer(buffer);
-    jsonDocument.Accept(writer);
+// void jsonParse::prettyPrint( )
+// {
+//     StringBuffer buffer;
+//     PrettyWriter<StringBuffer> writer(buffer);
+//     jsonDoc.Accept(writer);
 
-    cout << buffer.GetString() << endl << endl;
-}
+//     cout << buffer.GetString() << endl << endl;
+// }
 
-vector<string> redditJsonParse( Document & jsonDocument )
+vector<string> jsonParse::redditParse( )
 {
     vector<string> jsonVec;
-    int entries = jsonDocument["data"]["dist"].GetInt();
+    int entries = jsonDoc["data"]["dist"].GetInt();
     // cout << "Number of entries : " << entries << endl; 
 
-    Value & temp = jsonDocument["data"]["children"];
+    Value & temp = jsonDoc["data"]["children"];
     string url;
 
     for ( int i = 0; i < entries; i++ )
     {
         url = temp[i]["data"]["url"].GetString();
         // cout << slug << endl;
+
+        // TODO: skip the banned ones or keep to be able to update db
         if ( url.find( "twitch.tv" ) != string::npos )
             jsonVec.push_back( getSlug( url ) );
     }
@@ -52,7 +50,7 @@ vector<string> redditJsonParse( Document & jsonDocument )
     return jsonVec;
 }
 
-string getSlug( string url )
+string jsonParse::getSlug( string & url )
 {
     int positionOfQ;
 
@@ -72,7 +70,7 @@ string getSlug( string url )
 
 }
 
-unordered_map< string, string > twitchJsonParseClip( Document & jsonDoc )
+unordered_map< string, string > jsonParse::twitchClipParse()
 {
     unordered_map< string, string > tempMap;
 
@@ -110,11 +108,11 @@ unordered_map< string, string > twitchJsonParseClip( Document & jsonDoc )
     return tempMap;
 }
 
-// TODO: Handle special characters for name of the streamer
-// https://stackoverflow.com/questions/5906585/how-to-change-the-default-collation-of-a-database
-// the solution
+// // TODO: Handle special characters for name of the streamer
+// // https://stackoverflow.com/questions/5906585/how-to-change-the-default-collation-of-a-database
+// // the solution
 
-unordered_map< string, string > twitchJsonParseChannel( Document & jsonDoc )
+unordered_map< string, string > jsonParse::twitchChannelParse()
 {
     unordered_map<string, string> temp;
 
@@ -159,7 +157,7 @@ unordered_map< string, string > twitchJsonParseChannel( Document & jsonDoc )
 }
 
 // TODO: convert all vectors to array since content is fixed
-vector<string> parseTimeDate( string timeDate )
+vector<string> jsonParse::parseTimeDate( string & timeDate )
 {
     vector<string> temp;
 
@@ -173,4 +171,69 @@ vector<string> parseTimeDate( string timeDate )
     // cout << date << " - - - " << timeValUTC << endl;
 
     return temp;
+}
+
+bool jsonParse::redditIsInt()
+{
+    return jsonDoc["data"]["dist"].IsInt();
+}
+
+bool jsonParse::redditIsArray()
+{
+    return jsonDoc["data"]["children"].IsArray();
+}
+
+bool jsonParse::redditIsString()
+{
+    return jsonDoc["data"]["children"][0]["data"]["url"].IsString();
+}
+
+bool jsonParse::twitchClipIsString_id()
+{
+    return jsonDoc["data"][0]["broadcaster_id"].IsString();
+}
+
+bool jsonParse::twitchClipIsString_title()
+{
+    return jsonDoc["data"][0]["title"].IsString();
+}
+
+bool jsonParse::twitchClipIsString_gameID()
+{
+    return jsonDoc["data"][0]["game_id"].IsString();
+}
+
+bool jsonParse::twitchClipIsString_createdAt()
+{
+    return jsonDoc["data"][0]["created_at"].IsString();
+}
+
+bool jsonParse::twitchClipIsInt_viewCount()
+{
+    return jsonDoc["data"][0]["view_count"].IsInt();
+}
+
+bool jsonParse::twitchChannelIsString_name()
+{
+    return jsonDoc["display_name"].IsString();
+}
+
+bool jsonParse::twitchChannelIsString_updatedAt()
+{
+    return jsonDoc["updated_at"].IsString();
+}
+
+bool jsonParse::twitchChannelIsString_type()
+{
+    return jsonDoc["broadcaster_type"].IsString();
+}
+
+bool jsonParse::twitchChannelIsInt_followers()
+{
+    return jsonDoc["followers"].IsInt();
+}
+
+bool jsonParse::twitchChannelIsInt_views()
+{
+    return jsonDoc["views"].IsInt();
 }

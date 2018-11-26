@@ -31,6 +31,9 @@ class sqlConnector
 
         string getNameFromID( string );
 
+        bool checkConnection();
+        bool checkIfTableExist( string );
+
     private:
         Driver * driver = nullptr;
         Connection * conn = nullptr;

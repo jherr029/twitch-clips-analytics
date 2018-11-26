@@ -29,13 +29,6 @@ bool ifError( unordered_map<string, string> dataMap );
 
 int main(int argc, char **argv)
 {
-
-    // if ( strcmp(argv[1], "test") == 0 )
-    // {
-    //     testing::InitGoogleTest(&argc, argv);
-    //     return RUN_ALL_TESTS();
-    // }
-
     cout << "starting" << endl;
     sqlConnector sqlcpp;
 
@@ -53,7 +46,7 @@ int main(int argc, char **argv)
 
         cout << slugs[i] << endl;
 
-        if ( clipMap.size() == 0 )
+        if (clipMap.size() == 0)
         {
             cout << "empty map\n" << endl;
             continue;
@@ -121,11 +114,23 @@ int main(int argc, char **argv)
 
 vector<string> redditClipsHandler()
 {
-    string unParsedPageJson = curlGetJsonReddit();
-    Document pageDoc = createDocument( unParsedPageJson );
-    cout << endl;
+    curl curlObject;
 
-    vector<string> twitchSlugs = redditJsonParse( pageDoc );
+    curlObject.curlReddit();
+
+    vector<string> twitchSlugs;
+
+    if ( curlObject.isCallSuccessful() )
+    {
+        twitchSlugs = curlObject.parseReddit();
+    }
+
+    else
+    {
+        cout << "error: " << curlObject.getCode();
+    }
+
+    cout << twitchSlugs.size() << endl;
     cout << endl;
 
     return twitchSlugs;
@@ -134,23 +139,20 @@ vector<string> redditClipsHandler()
 unordered_map<string, string> createClipMap( string slug )
 {
     unordered_map< string, string > clipMap;
-    string unParsedClipJson = curlGetJsonTwitchClip( slug );
 
-    if ( unParsedClipJson == "error" )
-        return clipMap;     // return empty clipMap
-    
-    else if ( unParsedClipJson == "too many calls" )
+    curl curlObject;
+    curlObject.curlTwitchClip( slug );
+
+    if ( curlObject.isCallSuccessful() )
     {
-        clipMap["error"] = "calls";
-        return clipMap;
-    }
-    
-    // convert to json
-    Document clipDoc = createDocument( unParsedClipJson );
-    // prettyPrint( clipDoc );
+        clipMap = curlObject.parseTwitchClip();
 
-    clipMap = twitchJsonParseClip( clipDoc );
-    // TODO: delete duplicate ids is the solutioon
+    }
+
+    else
+    {
+        cout << "error: " << curlObject.getCode();
+    }
 
     return clipMap;
 }
@@ -158,20 +160,20 @@ unordered_map<string, string> createClipMap( string slug )
 unordered_map<string, string> createChannelMap( string id )
 {
     unordered_map<string, string> channelMap;
-    string unParsedChannelJson = curlGetJsonTwitchChannel( id );
 
-    if ( unParsedChannelJson == "error" )
-        return channelMap;
-    else if ( unParsedChannelJson == "too many calls" )
+    curl curlObject;
+
+    curlObject.curlTwitchChannel(id);
+
+    if ( curlObject.isCallSuccessful() )
     {
-        channelMap["error"] = "calls";
-        return channelMap;
+        channelMap = curlObject.parseTwitchChannel();
     }
 
-    Document channelDoc = createDocument( unParsedChannelJson );
-    // prettyPrint( channelDoc );
-
-    channelMap = twitchJsonParseChannel( channelDoc );
+    else
+    {
+        cout << "error: " << curlObject.getCode();
+    }
 
     return channelMap;
 }
@@ -179,7 +181,10 @@ unordered_map<string, string> createChannelMap( string id )
 bool ifError( unordered_map<string, string> dataMap )
 {
     if ( dataMap["error"] == "calls" )
+    {
+        cout << "there is an error" << endl;
         return true;
+    }
     
     return false;
 }

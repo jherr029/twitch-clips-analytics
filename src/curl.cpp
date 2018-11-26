@@ -21,7 +21,13 @@ namespace
     }
 }
 
-string curlGetJsonReddit()
+curl::curl()
+{
+    httpResult = 0;
+    stringResult = "";
+}
+
+void curl::curlReddit()
 {
 
     string userInfo = string(getenv("REDDIT_LOGIN")) + ":" + string(getenv("REDDIT_PASS"));
@@ -52,23 +58,35 @@ string curlGetJsonReddit()
     curl_easy_getinfo( curl, CURLINFO_RESPONSE_CODE, &httpCode);
     curl_easy_cleanup( curl );
 
-    if ( httpCode == 200 )
-        cout << "succussful get from reddit" << endl;
+    httpResult = httpCode;
 
-    else
+    if ( httpCode == 200 )
     {
-        cout << "unsuccessful get from reddit" << endl;
-        return "error";
+        stringResult = strTemp;
+        // cout << "succussful get from reddit" << endl;
 
     }
 
-    curl_global_cleanup();
+    else
+    {
+        stringResult = "NULL";
+        // cout << "error" << endl;
+        // cout << "unsuccessful get from reddit" << endl;
+    }
 
-    return strTemp;
+    curl_global_cleanup();
+}
+
+vector<string> curl::parseReddit()
+{
+    jsonParse obj;
+    obj.createDocument(stringResult);
+
+    return obj.redditParse();
 }
 
 // TODO: convert strings to char*
-string curlGetJsonTwitchClip( string slug )
+void curl::curlTwitchClip( string slug )
 {
     string strTemp2;
 
@@ -103,27 +121,38 @@ string curlGetJsonTwitchClip( string slug )
     curl_easy_getinfo( curl, CURLINFO_RESPONSE_CODE, &httpCode);
     curl_easy_cleanup( curl );
 
+    httpResult = httpCode;
+
     if ( httpCode == 200 )
-        cout << "succussful get from twitch clip ";
+    {
+        stringResult = strTemp2;
+        // cout << "succussful get from twitch clip ";
+    }
 
     else
     {
-        cout << httpCode;
-        cout << " unsuccessful get from twitch clip" << endl;
+        stringResult = "NULL";
+        // cout << httpCode << " error ";
+        // cout << " unsuccessful get from twitch clip" << endl;
 
-        if ( httpCode == 429 )
-            return "too many calls";
+        // if ( httpCode == 429 )
+            // cout << "too many calls";
 
-        return "error";
     }
 
     curl_global_cleanup();
     
-
-    return strTemp2;
 }
 
-string curlGetJsonTwitchChannel( string id )
+unordered_map<string, string> curl::parseTwitchClip()
+{
+    jsonParse obj;
+    obj.createDocument(stringResult);
+
+    return obj.twitchClipParse();
+}
+
+void curl::curlTwitchChannel( string id )
 {
     string strTemp2;
 
@@ -166,18 +195,48 @@ string curlGetJsonTwitchChannel( string id )
     curl_easy_getinfo( curl, CURLINFO_RESPONSE_CODE, &httpCode);
     curl_easy_cleanup( curl );
 
+    httpResult = httpCode;
+
     if ( httpCode == 200 )
-        cout << "succussful get from twitch channel ";
+    {
+        stringResult = strTemp2;
+        // cout << "succussful get from twitch channel ";
+    }
 
     else
     {
-        cout << httpCode;
-        cout << " unsuccessful get from twitch channel" << endl;
-        return "error";
+        stringResult = "NULL";
+        cout << httpCode << " error";
+        // cout << " unsuccessful get from twitch channel" << endl;
     }
 
     curl_global_cleanup();
     
+}
 
-    return strTemp2;
+unordered_map<string, string> curl::parseTwitchChannel()
+{
+    jsonParse obj;
+    obj.createDocument(stringResult);
+
+    return obj.twitchChannelParse();
+}
+
+bool curl::isCallSuccessful()
+{
+    if ( 200 == httpResult )
+        return true;
+
+    return false;
+}
+
+int curl::getCode()
+{
+    return httpResult;
+}
+
+
+string curl::getCurlResult()
+{
+    return stringResult;
 }
