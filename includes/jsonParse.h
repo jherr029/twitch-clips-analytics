@@ -10,17 +10,37 @@
 using namespace rapidjson;
 using namespace std;
 
-Document createDocument( string & );
-void parseDoc( Document & );
-void prettyPrint( Document & );
+class jsonParse
+{
+    public:
+        jsonParse();
+        void prettyPrint();
 
-vector<string> redditJsonParse( Document & );
-string getSlug( string );
+        void createDocument( string );
+        vector<string> redditParse();
+        unordered_map<string, string> twitchClipParse();
+        unordered_map<string, string> twitchChannelParse();
+    
+    protected:
+        Document jsonDoc;
 
-vector<string> parseTimeDate(string );
+    
+    private:
+        string getSlug( string & );
+        vector<string> parseTimeDate( string & );
 
-unordered_map< string, string > twitchJsonParseClip( Document & );
-unordered_map< string, string > twitchJsonParseChannel( Document & );
+};
+
+// void parseDoc( Document & );
+// void prettyPrint( Document & );
+
+// vector<string> redditJsonParse( Document & );
+// string getSlug( string );
+
+// vector<string> parseTimeDate(string );
+
+// unordered_map< string, string > twitchJsonParseClip( Document & );
+// unordered_map< string, string > twitchJsonParseChannel( Document & );
 
 
 
