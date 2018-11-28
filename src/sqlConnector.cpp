@@ -5,10 +5,10 @@ using namespace sql;
 
 string uniqueTable = "create table if not exists ";
 string insert = "insert into ";
-string channelParam = "(name, id, type) values (?, ?, ?)";
+string channelParam = "(name, sid, bType) values (?, ?, ?)";
 string channelDataParam = "(name, game, views, followers, date, time) values (?, ?, ?, ?, ?, ?)";
 string slugParam = "(name, title, views, date_created, time_created) values (?, ?, ?, ?, ?)";
-string selectName = "select name from channels where id=";
+string selectName = "select name from channels where sid=";
 // if inserting into all columns of a table then no need to name the columns
 
 
