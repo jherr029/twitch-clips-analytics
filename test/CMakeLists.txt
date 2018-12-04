@@ -20,5 +20,5 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
 
 
 # include_directories(${PROJECT_SOURCE_DIR}/includes)
-add_executable(tester testMain.cpp ../src/curl.cpp ../src/jsonParse.cpp ../src/sqlConnector.cpp)
+add_executable(tester testMain.cpp ../src/curl.cpp ../src/jsonParse.cpp ../src/sqlConnector.cpp ../src/errorFlag.cpp)
 target_link_libraries(tester gtest_main pthread curl mysqlcppconn)

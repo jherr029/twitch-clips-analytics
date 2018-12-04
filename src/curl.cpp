@@ -69,6 +69,7 @@ void curl::curlReddit()
 
     else
     {
+        errorObj.setErrorInfo(true, __FILE__, __func__, __LINE__ );
         stringResult = "NULL";
         // cout << "error" << endl;
         // cout << "unsuccessful get from reddit" << endl;
@@ -131,6 +132,7 @@ void curl::curlTwitchClip( string slug )
 
     else
     {
+        errorObj.setErrorInfo(true, __FILE__, __func__, __LINE__ );
         stringResult = "NULL";
         // cout << httpCode << " error ";
         // cout << " unsuccessful get from twitch clip" << endl;
@@ -205,6 +207,7 @@ void curl::curlTwitchChannel( string id )
 
     else
     {
+        errorObj.setErrorInfo(true, __FILE__, __func__, __LINE__ );
         stringResult = "NULL";
         cout << httpCode << " error";
         // cout << " unsuccessful get from twitch channel" << endl;
@@ -239,4 +242,9 @@ int curl::getCode()
 string curl::getCurlResult()
 {
     return stringResult;
+}
+
+bool curl::isError()
+{
+    return errorObj.errorExist(); 
 }
