@@ -2,6 +2,7 @@
 #define CURL_H_
 
 #include "jsonParse.h"
+#include "errorFlag.h"
 
 #include <iostream>
 #include <stdlib.h>
@@ -27,8 +28,12 @@ class curl : public jsonParse
         int getCode();
         string getCurlResult();
         bool isCallSuccessful();
+
+        bool isError();
     
     private:
+        errorFlag errorObj;
+
         int httpResult;
         string stringResult;
 

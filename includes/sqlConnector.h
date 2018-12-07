@@ -11,6 +11,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "extern.h"
+
 using namespace std;
 using namespace sql;
 
@@ -33,6 +35,10 @@ class sqlConnector
 
         bool checkConnection();
         bool checkIfTableExist( string );
+
+        vector<string> getAllChannelNames();
+        vector<rawChannelStats> fillStruct( string );
+        // vector<unsigned long int> 
 
     private:
         Driver * driver = nullptr;

@@ -98,10 +98,11 @@ unordered_map< string, string > jsonParse::twitchClipParse()
     tempMap["views"] = to_string(jsonDoc["data"][0]["view_count"].GetInt());
     tempMap["game_id"] = jsonDoc["data"][0]["game_id"].GetString();
 
-    string dateTime = jsonDoc["data"][0]["created_at"].GetString();
-    vector<string> dateTimeVec = parseTimeDate(dateTime);
-    tempMap["date"] = dateTimeVec[0];
-    tempMap["time"] = dateTimeVec[1];
+    string dateTimeTemp = jsonDoc["data"][0]["created_at"].GetString();
+    dateTimeTemp.pop_back();
+    dateTimeTemp.replace(10, 1, " ");
+    // cout << dateTimeTemp << endl;
+    tempMap["dateTime"] = dateTimeTemp;
 
     // maybe here do another api call to get the name of the game
 
@@ -124,6 +125,9 @@ unordered_map< string, string > jsonParse::twitchChannelParse()
     followersInt = jsonDoc["followers"].GetInt();
     viewsInt = jsonDoc["views"].GetInt();
     dateTime = jsonDoc["updated_at"].GetString();
+    dateTime.pop_back();
+    dateTime.replace(10, 1, " ");
+
 
     // parse date time and convert utc to pacific time
 
@@ -147,11 +151,8 @@ unordered_map< string, string > jsonParse::twitchChannelParse()
     temp["views"] = to_string( viewsInt );
     temp["game"] = game;
     temp["broadcaster_type"] = broadcasterType;
+    temp["dateTime"] = dateTime;
 
-    vector<string> dateTimeParsed = parseTimeDate(dateTime);
-
-    temp["date"] = dateTimeParsed[0];
-    temp["time"] = dateTimeParsed[1];
 
     return temp;
 }
