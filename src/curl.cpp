@@ -134,11 +134,11 @@ void curl::curlTwitchClip( string slug )
     {
         errorObj.setErrorInfo(true, __FILE__, __func__, __LINE__ );
         stringResult = "NULL";
-        // cout << httpCode << " error ";
+        cout << httpCode << " error clip - ";
         // cout << " unsuccessful get from twitch clip" << endl;
 
-        // if ( httpCode == 429 )
-            // cout << "too many calls";
+        if ( httpCode == 429 )
+            cout << "too many calls - ";
 
     }
 
@@ -209,7 +209,7 @@ void curl::curlTwitchChannel( string id )
     {
         errorObj.setErrorInfo(true, __FILE__, __func__, __LINE__ );
         stringResult = "NULL";
-        cout << httpCode << " error";
+        cout << httpCode << " error - channel  ";
         // cout << " unsuccessful get from twitch channel" << endl;
     }
 

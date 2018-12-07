@@ -6,6 +6,8 @@ lyticsGather::lyticsGather()
 }
 
 
+//TODO: somehow a empty row was inserted into the db
+// investigate why that is so.
 int lyticsGather::initiateGathering(char ** argv)
 {
     cout << "Initiating Gathering" << endl;
@@ -15,14 +17,20 @@ int lyticsGather::initiateGathering(char ** argv)
     vector<string> slugs = redditClipsHandler();
     unordered_map<string, bool> recentAPIcalls;
 
+
+    // TODO: C++ within this loop include if code is good, continue
+    // if not thread it out for a minute or two till it gets the answer
+    // this will be a 429 handler
+
     for ( int i = 0; i < slugs.size(); i++ )
     {
         unordered_map<string, string> clipMap = createClipMap( slugs[i] );
+        clipMap["clip"] = slugs[i];
 
         if ( ifError( clipMap ) )
             return 0;
 
-        cout << slugs[i] << endl;
+        cout << "Clip: " << slugs[i] << endl;
 
         // This occurs because the clip may have been deleted 
         // or the streamer that pertains to the clip has been banned
@@ -42,30 +50,34 @@ int lyticsGather::initiateGathering(char ** argv)
 
             // may no be needed
             if ( ifError( channelMap ) )
-                return 0;
+            {
+                cout << "returning 1 - fatal error" << endl;
+                return 1;
+            }
 
-            cout << channelMap["display_name"] << endl;
+            cout << "Channel: " << channelMap["display_name"] << endl;
 
             channelMap["id"] = clipMap["id"];
             clipMap["name"] = channelMap["display_name"];
-            cout << endl;
 
             // will potentially move this to lyticsGather
             // need to find figure out sqlConnector to work in functions
             // TODO:
             // add something similar to this to avoid doing redundant api calls for recent
             // stuff. This will have to be more specific than the sql version
-            if ( sqlcpp.ifRecentChannel( channelMap["display_name"] ) == 0 )
+            if ( sqlcpp.ifRecentChannel( channelMap["display_name"] ) == false )
             {
+                cout << "Unique Channel (NEW)" << endl << endl;
                 if ( strcmp(argv[1], "prod") == 0 )
                 {
                     sqlcpp.insertToChannelTable( channelMap );
                     sqlcpp.insertToChannelDataTable( channelMap );
                     sqlcpp.insertToSlugDataTable( clipMap );
 
-                    // Cache name
-                    sqlcpp.addToRecentChannelMap( channelMap["display_name"] );
                 }
+
+                // Cache name // when not using prod this wont work in certain cases
+                sqlcpp.addToRecentChannelMap( channelMap["display_name"] );
             }
             else
             {
@@ -87,7 +99,7 @@ int lyticsGather::initiateGathering(char ** argv)
         else
         {
             string name = sqlcpp.getNameFromID( clipMap["id"] );
-            cout << "from " << name << endl;
+            cout << "Using cache for ID " << clipMap["id"] << " whom belongs to " << name << endl;
             clipMap["name"] = name;
             cout << endl;
 
@@ -114,7 +126,7 @@ vector<string> lyticsGather::redditClipsHandler()
 
     else
     {
-        cout << "error: " << curlObject.getCode();
+        cout << "redditClipsHandler error: " << curlObject.getCode() << " ";
     }
 
     cout << twitchSlugs.size() << endl;
@@ -139,7 +151,7 @@ unordered_map<string, string> lyticsGather::createClipMap( string slug )
 
     else
     {
-        cout << "error: " << curlObject.getCode();
+        cout << "createClipMap error: " << curlObject.getCode() << " ";
     }
 
     return clipMap;
@@ -160,7 +172,7 @@ unordered_map<string, string> lyticsGather::createChannelMap( string id )
 
     else
     {
-        cout << "error: " << curlObject.getCode();
+        cout << "createChannelMap error: " << curlObject.getCode() << " ";
     }
 
     return channelMap;

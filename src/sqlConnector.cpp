@@ -6,14 +6,18 @@ using namespace sql;
 string uniqueTable = "create table if not exists ";
 string insert = "insert into ";
 string channelParam = "(name, sid, bType) values (?, ?, ?)";
-string channelDataParam = "(name, game, views, followers, date, time) values (?, ?, ?, ?, ?, ?)";
-string slugParam = "(name, title, views, date_created, time_created) values (?, ?, ?, ?, ?)";
+string channelDataParam = "(name, game, views, followers, dateTimeUpdated) values (?, ?, ?, ?, ? )";
+string slugParam = "(name, title, clip, views, dateTimeCreated) values (?, ?, ?, ?, ? )";
 string selectName = "select name from channels where sid=";
+string getAllNames = "select * from channels";
+string viewsFollows = "select name, views, followers, dateTime from channel_data where name = ";
 // if inserting into all columns of a table then no need to name the columns
 
 
+// TODO: create a new user in mysql that can only read certain tables
 sqlConnector::sqlConnector()
 {
+    cout << "sqlConnector initialized" << endl;
     try
     {
         driver = get_driver_instance();
@@ -73,8 +77,7 @@ void sqlConnector::insertToChannelDataTable( unordered_map<string, string> chann
         pstmt->setString(2, channelMap["game"]);
         pstmt->setString(3, channelMap["views"]);   // may get error here
         pstmt->setString(4, channelMap["followers"]);   // here
-        pstmt->setString(5, channelMap["date"]);    // here
-        pstmt->setString(6, channelMap["time"]);    // here
+        pstmt->setString(5, channelMap["dateTime"]);    // here
         pstmt->execute();
 
         pstmt->clearParameters();
@@ -95,9 +98,9 @@ void sqlConnector::insertToSlugDataTable( unordered_map<string, string> slugMap 
         pstmt = conn->prepareStatement( insert + "slugs_data" + slugParam );
         pstmt->setString(1, slugMap["name"]);   // stick to either display_name or name
         pstmt->setString(2, slugMap["title"]);
-        pstmt->setString(3, slugMap["views"]);   // may get error here
-        pstmt->setString(4, slugMap["date"]);   // here
-        pstmt->setString(5, slugMap["time"]);    // here
+        pstmt->setString(3, slugMap["clip"]);
+        pstmt->setString(4, slugMap["views"]);   // may get error here
+        pstmt->setString(5, slugMap["dateTime"]);   // here
         pstmt->execute();
 
         pstmt->clearParameters();
@@ -119,7 +122,7 @@ string sqlConnector::getNameFromID( string id )
         while ( res->next() )
         {
             // cout << res->getString(1);
-            name = res->getString(1);
+            name = res->getString("name");
         }
         // res->next();
 
@@ -190,4 +193,60 @@ bool sqlConnector::checkIfTableExist( string table )
         return true;
 
     return false;
+}
+
+vector<string> sqlConnector::getAllChannelNames()
+{
+    vector<string> allChannelNames;
+
+    try
+    {
+        res = stmt->executeQuery(getAllNames);
+
+        while ( res->next() )
+        {
+            allChannelNames.push_back( res->getString("name") );
+
+        }
+
+    }
+    catch ( SQLException & e )
+    {
+        printExceptionInfo( e );
+    }
+
+    return allChannelNames;
+
+}
+
+vector<rawChannelStats> sqlConnector::fillStruct( string name )
+{
+    vector<rawChannelStats> structVector;
+
+    try
+    {
+        res = stmt->executeQuery(viewsFollows + "'" + name + "'");
+
+        while ( res->next() )
+        {
+            rawChannelStats tempStruct;
+
+            tempStruct.name = res->getString("name");
+            tempStruct.views = res->getUInt("views");
+            tempStruct.followers = res->getUInt("followers");
+            tempStruct.dateUpdated = res->getString("dateTime");
+
+            structVector.push_back(tempStruct);
+
+        }
+
+    }
+    catch ( SQLException & e )
+    {
+        printExceptionInfo( e );
+    }
+
+
+    return structVector;
+
 }
