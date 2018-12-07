@@ -101,7 +101,7 @@ unordered_map< string, string > jsonParse::twitchClipParse()
     string dateTimeTemp = jsonDoc["data"][0]["created_at"].GetString();
     dateTimeTemp.pop_back();
     dateTimeTemp.replace(10, 1, " ");
-    cout << dateTimeTemp << endl;
+    // cout << dateTimeTemp << endl;
     tempMap["dateTime"] = dateTimeTemp;
 
     // maybe here do another api call to get the name of the game
