@@ -36,9 +36,9 @@ int lyticsGather::initiateGathering(char ** argv)
 
         // This occurs because the clip may have been deleted 
         // or the streamer that pertains to the clip has been banned
-        if (clipMap.size() == 0)
+        if (clipMap.size() == 1)
         {
-            cout << "empty map\n" << endl;
+            cout << "A psuedo 200 result occured - should be 400!!!\n" << endl;
             continue;
         }
 
@@ -54,7 +54,14 @@ int lyticsGather::initiateGathering(char ** argv)
             if ( ifError( channelMap ) )
             {
                 cout << "returning 1 - fatal error" << endl;
-                return 1;
+                continue;
+                // return 1;
+            }
+
+            else if (channelMap.size() == 0 )
+            {
+                cout << "empty channel map!!!\n" << endl;
+                continue;
             }
 
             cout << "Channel: " << channelMap["display_name"] << endl;
@@ -72,6 +79,7 @@ int lyticsGather::initiateGathering(char ** argv)
                 cout << "Unique Channel (NEW)" << endl << endl;
                 if ( strcmp(argv[1], "prod") == 0 )
                 {
+                    cout << "inserting to DB" << endl;
                     sqlcpp.insertToChannelTable( channelMap );
                     sqlcpp.insertToChannelDataTable( channelMap );
                     sqlcpp.insertToSlugDataTable( clipMap );
@@ -106,7 +114,10 @@ int lyticsGather::initiateGathering(char ** argv)
             cout << endl;
 
             if ( strcmp(argv[1], "prod") == 0 )
+            {
+                cout << "inserting to DB" << endl;
                 sqlcpp.insertToSlugDataTable( clipMap );
+            }
 
         }
     }
@@ -183,7 +194,7 @@ unordered_map<string, string> lyticsGather::createChannelMap( string id )
 
 bool lyticsGather::ifError( unordered_map<string, string> dataMap )
 {
-    if ( dataMap["error"] == "calls" || dataMap.size() == 0 )
+    if ( dataMap["error"] == "calls" )
     {
         cout << "there is an error" << endl;
         return true;

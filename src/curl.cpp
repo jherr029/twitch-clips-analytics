@@ -127,6 +127,7 @@ void curl::curlTwitchClip( string slug )
     if ( httpCode == 200 )
     {
         stringResult = strTemp2;
+
         // cout << "succussful get from twitch clip ";
     }
 
@@ -148,6 +149,13 @@ void curl::curlTwitchClip( string slug )
 
 unordered_map<string, string> curl::parseTwitchClip()
 {
+    if (stringResult == "{\"data\":[],\"pagination\":{}}")
+    {
+        cout << "returning empty map" << endl;
+        unordered_map<string, string> emptyMap;
+        return emptyMap;
+    }
+
     jsonParse obj;
     obj.createDocument(stringResult);
 
@@ -219,6 +227,13 @@ void curl::curlTwitchChannel( string id )
 
 unordered_map<string, string> curl::parseTwitchChannel()
 {
+    if (stringResult == "{\"data\":[],\"pagination\":{}}")
+    {
+        cout << "returning empty channel map" << endl;
+        unordered_map<string, string> emptyMap;
+        return emptyMap;
+    }
+
     jsonParse obj;
     obj.createDocument(stringResult);
 
