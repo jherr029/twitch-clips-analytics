@@ -24,6 +24,8 @@ int lyticsGather::initiateGathering(char ** argv)
 
     for ( int i = 0; i < slugs.size(); i++ )
     {
+        // one approach for error code of to do a while this is while error wait x minutes
+        // can be done through a thread
         unordered_map<string, string> clipMap = createClipMap( slugs[i] );
         clipMap["clip"] = slugs[i];
 
@@ -181,7 +183,7 @@ unordered_map<string, string> lyticsGather::createChannelMap( string id )
 
 bool lyticsGather::ifError( unordered_map<string, string> dataMap )
 {
-    if ( dataMap["error"] == "calls" )
+    if ( dataMap["error"] == "calls" || dataMap.size() == 0 )
     {
         cout << "there is an error" << endl;
         return true;
