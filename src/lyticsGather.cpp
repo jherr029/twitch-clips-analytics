@@ -79,7 +79,6 @@ int lyticsGather::initiateGathering(char ** argv)
                 cout << "Unique Channel (NEW)" << endl << endl;
                 if ( strcmp(argv[1], "prod") == 0 )
                 {
-                    cout << "inserting to DB" << endl;
                     sqlcpp.insertToChannelTable( channelMap );
                     sqlcpp.insertToChannelDataTable( channelMap );
                     sqlcpp.insertToSlugDataTable( clipMap );
@@ -115,7 +114,6 @@ int lyticsGather::initiateGathering(char ** argv)
 
             if ( strcmp(argv[1], "prod") == 0 )
             {
-                cout << "inserting to DB" << endl;
                 sqlcpp.insertToSlugDataTable( clipMap );
             }
 
