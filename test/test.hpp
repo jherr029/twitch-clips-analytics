@@ -25,9 +25,8 @@ TEST(curl, redditCurl)
     curlObj.curlReddit();
     ASSERT_EQ(200, curlObj.getCode());
     ASSERT_STRNE("", curlObj.getCurlResult().c_str());
-
-
 }
+
 
 TEST(jsonParse, isVarReddit)
 {
@@ -80,6 +79,26 @@ TEST(curl, twitchClipCurl)
     ASSERT_EQ(200, curlObj.getCode());
     ASSERT_STRNE("", curlObj.getCurlResult().c_str());
 
+}
+
+TEST(curl, TwitchClipCurlPsuedo400_1)
+{
+    curl curlObj;
+
+    // A removed clip - this is supposed to be a 400 but a 200 is returned
+    curlObj.curlTwitchClip("SpookyPleasantGullFeelsBadMan");
+    EXPECT_EQ(200, curlObj.getCode());
+    ASSERT_STREQ("{\"data\":[],\"pagination\":{}}", curlObj.getCurlResult().c_str());
+}
+
+TEST(curl, TwitchClipCurlPsuedo400_2)
+{
+    curl curlObj;
+
+    // A removed clip - this is supposed to be a 400 but a 200 is returned
+    curlObj.curlTwitchClip("AltruisticPolishedOtterFeelsBadMan");
+    EXPECT_EQ(200, curlObj.getCode());
+    ASSERT_STREQ("{\"data\":[],\"pagination\":{}}", curlObj.getCurlResult().c_str());
 }
 
 TEST(curl, twitchChannelCurl)
